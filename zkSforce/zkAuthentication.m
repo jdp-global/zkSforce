@@ -119,6 +119,10 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 -(NSURL *)instanceUrl {
     return [NSURL URLWithString:[NSString stringWithFormat:@"/services/Soap/u/%d.0", apiVersion] relativeToURL:instanceUrl];
 }
+-(NSURL *)metaDataUrl {
+    return [NSURL URLWithString:[NSString stringWithFormat:@"/services/Soap/m/%d.0", apiVersion] relativeToURL:instanceUrl];
+}
+
 
 -(void)refresh {
     NSURL *token = [NSURL URLWithString:@"/services/oauth2/token" relativeToURL:authUrl];

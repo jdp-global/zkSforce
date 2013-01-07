@@ -33,6 +33,7 @@
 #import "zkParser.h"
 #import "ZKDescribeLayoutResult.h"
 #import "ZKDescribeTabSetResult.h"
+#import "XMLReader.h"
 
 static const int SAVE_BATCH_SIZE = 25;
 
@@ -272,6 +273,45 @@ static const int SAVE_BATCH_SIZE = 25;
 	ZKDescribeLayoutResult *desc = [[[ZKDescribeLayoutResult alloc] initWithXmlElement:descResult] autorelease];
 	return desc;
 }
+
+- (NSDictionary *)describeLayout:(NSString *)sobjectName {
+	if (!authSource) return nil;
+	[self checkSession];
+	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId] autorelease];
+	[env startElement:@"describeLayout"];
+	[env addElement:@"sObjectType" elemValue:sobjectName];
+	//[env addElementArray:@"recordTypeIds" elemValue:recordTypeIds];
+	[env endElement:@"describeLayout"];
+	[env endElement:@"s:Body"];
+    
+	NSDictionary *dict  = [self fireRequest:[env end]];
+
+    return dict;
+}
+- (NSDictionary *)listMetaData {
+	if (!authSource) return nil;
+	[self checkSession];
+	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId] autorelease];
+	[env startElement:@"listMetadata"];
+	[env endElement:@"listMetadata"];
+	[env endElement:@"s:Body"];
+	NSDictionary *dict  = [self fireMetaDataRequest:[env end]];
+    
+    return dict;
+}
+
+- (NSDictionary *)describeMetaData {
+	if (!authSource) return nil;
+	[self checkSession];
+	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId] autorelease];
+    [env addElement:@"describeMetadata" elemValue:[NSNumber numberWithInt:preferedApiVersion]];
+	[env endElement:@"s:Body"];
+	NSDictionary *dict  = [self fireMetaDataRequest:[env end]];
+    
+    return dict;
+}
+
+
 
 - (NSArray *)describeTabs {
     if (!authSource) return nil;

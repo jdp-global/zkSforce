@@ -30,5 +30,6 @@
 
 - (zkElement *)sendRequest:(NSString *)payload;
 - (zkElement *)sendRequest:(NSString *)payload returnRoot:(BOOL)root;
-
+- (NSDictionary *)fireRequest:(NSString *)payload;
+- (NSDictionary *)fireMetaDataRequest:(NSString *)payload;
 @end
