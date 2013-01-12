@@ -143,7 +143,7 @@
 // makes a setPassword call for the specified userId, with the new password.
 - (void)setPassword:(NSString *)newPassword forUserId:(NSString *)userId;
 
--(NSDictionary*)describeMetaData;
+- (NSDictionary*)describeMetaData;
 - (NSDictionary *)listMetaDataWithType:(NSString*)qType folder:(NSString*)folder;
 
 // Information about the current session

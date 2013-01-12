@@ -324,8 +324,9 @@ static const int SAVE_BATCH_SIZE = 25;
 - (NSDictionary *)describeMetaData{
 	if (!authSource) return nil;
 	[self checkSession];
-	ZKGenericEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
+	ZKGenericEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionAndMruHeaders:[authSource sessionId] mru:NO clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
     
+
     [env startElement:@"met:describeMetaData"];
     [env endElement:@"met:describeMetaData"];
 	[env endElement:@"s:Body"];
@@ -337,7 +338,8 @@ static const int SAVE_BATCH_SIZE = 25;
 - (NSDictionary *)listMetaDataWithType:(NSString*)qType folder:(NSString*)folder {
 	if (!authSource) return nil;
 	[self checkSession];
-	ZKEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
+	ZKGenericEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionAndMruHeaders:[authSource sessionId] mru:NO clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
+    
     
     [env startElement:@"met:listMetadata"];
     
