@@ -83,7 +83,7 @@ Meta Data API
 
 
 
-pod 'ZKSforce',  :git => 'https://github.com/jdp-global/zkSforce.git', :commit => 'c2ba0888d536c4b73b2dfc7b61b706350f82c898' 
+pod 'ZKSforce',  :git => 'https://github.com/jdp-global/zkSforce.git'
 
 
 

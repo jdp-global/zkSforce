@@ -326,9 +326,10 @@ static const int SAVE_BATCH_SIZE = 25;
 	[self checkSession];
 	ZKGenericEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionAndMruHeaders:[authSource sessionId] mru:NO clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
     
-
-    [env startElement:@"met:describeMetaData"];
-    [env endElement:@"met:describeMetaData"];
+ 
+    [env startElement:@"met:describeMetadata"];
+    [env addElement:@"met:asOfVersion" elemValue:[NSNumber numberWithInt:preferedApiVersion]];
+    [env endElement:@"met:describeMetadata"];
 	[env endElement:@"s:Body"];
 	NSDictionary *dict  = [self fireMetaDataRequest:[env end]];
     
