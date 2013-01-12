@@ -24,16 +24,31 @@
 @implementation ZKPartnerEnvelope
 
 - (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId {
-	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId];
+	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:@"partner.soap.sforce.com" prefix:@"urn"];
 }
 
-- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId {
+// Prefix met =  meta data api
+- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix{
+	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:primaryNamespceUri prefix:prefix];
+}
+
+- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix{
+    
 	self = [super init];
-	[self start:@"urn:partner.soap.sforce.com"];
-	[self writeSessionHeader:sessionId];
-	[self writeCallOptionsHeader:clientId];
-	[self writeMruHeader:mru];
-	[self moveToBody];
+
+	[self start:primaryNamespceUri prefix:prefix];
+    if (![prefix isEqualToString:@""]) {
+        [self writeSessionHeader:sessionId prefix:prefix];
+        [self writeCallOptionsHeader:clientId  prefix:prefix];
+        [self writeMruHeader:mru];
+        [self moveToBody];
+    }else{
+       	[self writeSessionHeader:sessionId];
+        [self writeCallOptionsHeader:clientId];
+        [self writeMruHeader:mru];
+        [self moveToBody];
+    }
+
 	return self;
 }
 

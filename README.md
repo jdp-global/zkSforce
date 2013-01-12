@@ -53,6 +53,40 @@ Login and create a new contact for Simon Fell, and check the result
 	        NSLog(@"error creating contact %@ %@", [sr statusCode], [sr message]);
         [sforce release];
 
+
+Meta Data API
+- the authenticated user needs access to be able to read meta data api (see SF meta data api docs)
+
+// sample method created within SFUtil class - this will return a generic nsdictionary.
+-(void)listMetaDataWithfailBlock:(SFVFailBlock)failBlock  completeBlock:(void (^)(NSDictionary * tabDict))completeBlock {
+
+    
+    [SFVAsync performSFVAsyncRequest:(id)^{
+        return [client listMetaDataWithType:@"CustomObject" folder:@"" ];
+    }
+                           failBlock:^(NSException *e) {
+                               DLog(@"e:%@",e);
+                               failBlock (e);
+                               return;
+                           }
+                       completeBlock:^(id result) {
+                           DLog(@"results:%@",result);
+                           if( result ) {
+                               completeBlock( result );
+                           }
+                           
+                       }];
+
+
+}
+
+
+pod 'ZKSforce',  :git => 'https://github.com/jdp-global/zkSforce.git', :commit => 'b3adbcf4783de5c3482a7ee7195b57f52ec9a25d'
+
+
+
+
+
 Calls are made synchronously on the thread making the call (and therefore you shouldn't really call it directly from the UI thread), zkSforceClient+zkAsyncQuery.h has a bunch of
 helper method that let you make asynchronous calls and to have a block run on completion of call.
 

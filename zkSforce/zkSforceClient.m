@@ -22,6 +22,7 @@
 
 #import "zkSforceClient.h"
 #import "zkPartnerEnvelope.h"
+#import "ZKGenericEnvelope.h"
 #import "zkQueryResult.h"
 #import "zkSaveResult.h"
 #import "zkSObject.h"
@@ -318,10 +319,25 @@ static const int SAVE_BATCH_SIZE = 25;
  
  
  */
-- (NSDictionary *)describeMetaDataWithType:(NSString*)qType folder:(NSString*)folder {
+
+
+- (NSDictionary *)describeMetaData{
 	if (!authSource) return nil;
 	[self checkSession];
-	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
+	ZKGenericEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
+    
+    [env startElement:@"met:describeMetaData"];
+    [env endElement:@"met:describeMetaData"];
+	[env endElement:@"s:Body"];
+	NSDictionary *dict  = [self fireMetaDataRequest:[env end]];
+    
+    return dict;
+}
+
+- (NSDictionary *)listMetaDataWithType:(NSString*)qType folder:(NSString*)folder {
+	if (!authSource) return nil;
+	[self checkSession];
+	ZKEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
     
     [env startElement:@"met:listMetadata"];
     

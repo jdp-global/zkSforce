@@ -21,7 +21,7 @@
 
 #import "ZKEnvelope.h"
 
-@interface ZKGenericEnvelope : ZKEnvelope {
+@interface ZKPartnerEnvelope : ZKEnvelope {
 }
 
 - (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId;

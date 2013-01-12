@@ -19,9 +19,9 @@
 // THE SOFTWARE.
 //
 
-#import "ZKGenericEnvelope.h"
+#import "ZKPartnerEnvelope.h"
 
-@implementation ZKGenericEnvelope
+@implementation ZKPartnerEnvelope
 
 - (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId {
 	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:@"partner.soap.sforce.com" prefix:@"urn"];

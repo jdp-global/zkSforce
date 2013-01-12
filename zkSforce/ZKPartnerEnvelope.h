@@ -25,6 +25,7 @@
 }
 
 - (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId;
-- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId;
+- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix;
+- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix;
 
 @end
