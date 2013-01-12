@@ -38,7 +38,13 @@ enum envState {
 
 - (void)start:(NSString *)primaryNamespceUri prefix:(NSString*)prefix {
 	[env release];
-	env = [NSMutableString stringWithFormat:@"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:%@=\"%@\">",prefix, primaryNamespceUri];
+    
+    if (![prefix isEqualToString:@""]){
+        env = [NSMutableString stringWithFormat:@"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:%@=\"%@\">",prefix, primaryNamespceUri];      
+    }else{
+       	env = [NSMutableString stringWithFormat:@"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"%@\">", primaryNamespceUri]; 
+    }
+
 	state = inEnvelope;
 }
 

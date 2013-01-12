@@ -24,7 +24,7 @@
 @implementation ZKPartnerEnvelope
 
 - (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId {
-	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:@"partner.soap.sforce.com" prefix:@"urn"];
+	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:@"urn:partner.soap.sforce.com" prefix:@""];
 }
 
 // Prefix met =  meta data api
