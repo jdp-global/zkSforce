@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006-2008 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -19,31 +19,33 @@
 // THE SOFTWARE.
 //
 
+#import "ZKGenericEnvelope.h"
 
-#import "zkSObject.h"
+@implementation ZKGenericEnvelope
 
-@interface ZKEnvelope : NSObject {
-	NSMutableString 	*env;
-	int					state;
+- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId {
+	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:@"partner.soap.sforce.com" prefix:@"urn"];
 }
 
-- (void)start:(NSString *)primaryNamespceUri;
-- (void)start:(NSString *)primaryNamespceUri prefix:(NSString*)prefix;
-- (void)writeSessionHeader:(NSString *)sessionId;
-- (void)writeSessionHeader:(NSString *)sessionId prefix:(NSString*)prefix;
-- (void)writeCallOptionsHeader:(NSString *)clientId;
-- (void)writeCallOptionsHeader:(NSString *)clientId  prefix:(NSString*)prefix;
-- (void)writeMruHeader:(BOOL)updateMru;
 
-- (void) moveToBody;
-- (void) startElement:(NSString *)elemName;
-- (void) endElement:(NSString *)elemName;
-- (void) writeText:(NSString *)text;
-- (void) addElement:(NSString *)elemName elemValue:(id)elemValue;
-- (NSString *)end;
+- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix{
+    
+	self = [super init];
 
-- (void) addElementArray:(NSString *)elemName   elemValue:(NSArray *)elemValues;
-- (void) addElementSObject:(NSString *)elemName elemValue:(ZKSObject *)sobject;
-- (void) addElementString:(NSString *)elemName  elemValue:(NSString *)elemValue;
+	[self start:primaryNamespceUri prefix:prefix];
+    if (![prefix isEqualToString:@""]) {
+        [self writeSessionHeader:sessionId prefix:prefix];
+        [self writeCallOptionsHeader:clientId  prefix:prefix];
+        [self writeMruHeader:mru];
+        [self moveToBody];
+    }else{
+       	[self writeSessionHeader:sessionId];
+        [self writeCallOptionsHeader:clientId];
+        [self writeMruHeader:mru];
+        [self moveToBody];
+    }
+
+	return self;
+}
 
 @end

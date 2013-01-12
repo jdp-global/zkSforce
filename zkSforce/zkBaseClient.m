@@ -92,6 +92,7 @@ curl -d "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='
 	[request addValue:@"\"\"" forHTTPHeaderField:@"SOAPAction"];
 	[request addValue:@"gzip,deflate" forHTTPHeaderField:@"Accepts-Encoding"];
     
+    NSLog(@"payload:%@",payload);
 	NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
 	[request setHTTPBody:data];
 	

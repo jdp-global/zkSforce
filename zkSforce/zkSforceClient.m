@@ -288,23 +288,56 @@ static const int SAVE_BATCH_SIZE = 25;
 
     return dict;
 }
-- (NSDictionary *)listMetaData {
-	if (!authSource) return nil;
-	[self checkSession];
-	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId] autorelease];
-	[env startElement:@"listMetadata"];
-	[env endElement:@"listMetadata"];
-	[env endElement:@"s:Body"];
-	NSDictionary *dict  = [self fireMetaDataRequest:[env end]];
-    
-    return dict;
-}
 
-- (NSDictionary *)describeMetaData {
+
+
+/*
+ 
+ 
+ curl -d '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:met="http://soap.sforce.com/2006/04/metadata">
+ <soapenv:Header>
+ <met:CallOptions>
+ <met:client>?</met:client>
+ </met:CallOptions>
+ <met:SessionHeader>
+ <met:sessionId>00Dd0000000ehoT\!ARwAQJm.TJd4oZ4Xjg1DVjBsPx2DD_O8ISHdmFX.f3sQ468pJXNHXnIUdgQL6cRwAqhoOk1RN0Ik5xGugIjYg.20AFVAmsS7</met:sessionId>
+ </met:SessionHeader>
+ </soapenv:Header>
+ <soapenv:Body>
+ <met:listMetadata>
+ <!--Zero or more repetitions:-->
+ <met:queries>
+ <!--Optional:-->
+ <!--<met:folder>?</met:folder>-->
+ <met:type>CustomObject</met:type>
+ </met:queries>
+ <met:asOfVersion>26</met:asOfVersion>
+ </met:listMetadata>
+ </soapenv:Body>
+ </soapenv:Envelope>' https://na14.salesforce.com/services/Soap/m/26.0 -H "Content-Type:text/xml"  -H 'SOAPAction: ""'
+ 
+ 
+ */
+- (NSDictionary *)describeMetaDataWithType:(NSString*)qType folder:(NSString*)folder {
 	if (!authSource) return nil;
 	[self checkSession];
-	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId] autorelease];
-    [env addElement:@"describeMetadata" elemValue:[NSNumber numberWithInt:preferedApiVersion]];
+	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
+    
+    [env startElement:@"met:listMetadata"];
+    
+    
+    [env startElement:@"met:queries"];
+    if (![qType isEqualToString:@""]){
+        [env addElement:@"met:type" elemValue:qType];
+    }
+    if (![folder isEqualToString:@""]){
+        [env addElement:@"met:folder" elemValue:folder];
+    }
+    [env endElement:@"met:queries"];
+   
+
+    [env addElement:@"met:asOfVersion" elemValue:[NSNumber numberWithInt:preferedApiVersion]];
+    [env endElement:@"met:listMetadata"];
 	[env endElement:@"s:Body"];
 	NSDictionary *dict  = [self fireMetaDataRequest:[env end]];
     
@@ -321,12 +354,12 @@ static const int SAVE_BATCH_SIZE = 25;
     [env endElement:@"describeTabs"];
     [env endElement:@"s:Body"];
     
-    zkElement *dr = [self sendRequest:[env end]];
-    NSMutableArray *results = [NSMutableArray array];
+    id results = [self fireRequest:[env end]];
+    /*NSMutableArray *results = [NSMutableArray array];
     for (zkElement *res in [dr childElements:@"result"]) {
         ZKDescribeTabSetResult *dt = [[[ZKDescribeTabSetResult alloc] initWithXmlElement:res] autorelease];
         [results addObject:dt];
-    }
+    }*/
     return results;
 }
 

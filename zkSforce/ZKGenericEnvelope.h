@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006-2008 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -19,31 +19,13 @@
 // THE SOFTWARE.
 //
 
+#import "ZKEnvelope.h"
 
-#import "zkSObject.h"
-
-@interface ZKEnvelope : NSObject {
-	NSMutableString 	*env;
-	int					state;
+@interface ZKGenericEnvelope : ZKEnvelope {
 }
 
-- (void)start:(NSString *)primaryNamespceUri;
-- (void)start:(NSString *)primaryNamespceUri prefix:(NSString*)prefix;
-- (void)writeSessionHeader:(NSString *)sessionId;
-- (void)writeSessionHeader:(NSString *)sessionId prefix:(NSString*)prefix;
-- (void)writeCallOptionsHeader:(NSString *)clientId;
-- (void)writeCallOptionsHeader:(NSString *)clientId  prefix:(NSString*)prefix;
-- (void)writeMruHeader:(BOOL)updateMru;
-
-- (void) moveToBody;
-- (void) startElement:(NSString *)elemName;
-- (void) endElement:(NSString *)elemName;
-- (void) writeText:(NSString *)text;
-- (void) addElement:(NSString *)elemName elemValue:(id)elemValue;
-- (NSString *)end;
-
-- (void) addElementArray:(NSString *)elemName   elemValue:(NSArray *)elemValues;
-- (void) addElementSObject:(NSString *)elemName elemValue:(ZKSObject *)sobject;
-- (void) addElementString:(NSString *)elemName  elemValue:(NSString *)elemValue;
+- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId;
+- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId namespace:(NSString*)primaryNamespceUri;
+- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix;
 
 @end

@@ -36,6 +36,12 @@ enum envState {
 	state = inEnvelope;
 }
 
+- (void)start:(NSString *)primaryNamespceUri prefix:(NSString*)prefix {
+	[env release];
+	env = [NSMutableString stringWithFormat:@"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:%@=\"%@\">",prefix, primaryNamespceUri];
+	state = inEnvelope;
+}
+
 - (void)moveToHeaders {
 	if (state == inBody)
 		@throw [NSException exceptionWithName:@"Illegal State Exception" reason:@"Unable to write headers once we've moved to the body" userInfo:nil];
@@ -45,19 +51,38 @@ enum envState {
 }
 
 - (void)writeSessionHeader:(NSString *)sessionId {
+	[self writeSessionHeader:sessionId prefix:@""];
+}
+- (void)writeSessionHeader:(NSString *)sessionId prefix:(NSString*)prefix{
 	if ([sessionId length] == 0) return;
 	[self moveToHeaders];
-	[self startElement:@"SessionHeader"];
-	[self addElement:@"sessionId" elemValue:sessionId];
-	[self endElement:@"SessionHeader"];
-}
+    if (![prefix isEqualToString:@""]) {
+        [self startElement:[NSString stringWithFormat:@"%@:SessionHeader",prefix]];
+        [self addElement:[NSString stringWithFormat:@"%@:sessionId",prefix]  elemValue:sessionId];
+        [self endElement:[NSString stringWithFormat:@"%@:SessionHeader",prefix]];
+    }else{
+        [self startElement:@"SessionHeader"];
+        [self addElement:@"sessionId" elemValue:sessionId];
+        [self endElement:@"SessionHeader"];
+    }
 
-- (void)writeCallOptionsHeader:(NSString *)clientId {
+}
+- (void)writeCallOptionsHeader:(NSString *)clientId{
+    [self writeCallOptionsHeader:clientId prefix:@""];
+}
+- (void)writeCallOptionsHeader:(NSString *)clientId  prefix:(NSString*)prefix{
 	if ([clientId length] == 0) return;
 	[self moveToHeaders];
-	[self startElement:@"CallOptions"];
-	[self addElement:@"client" elemValue:clientId];
-	[self endElement:@"CallOptions"];
+    if (![prefix isEqualToString:@""]) {
+        [self startElement:[NSString stringWithFormat:@"%@:CallOptions",prefix]];
+        [self addElement:[NSString stringWithFormat:@"%@:client",prefix]  elemValue:clientId];
+        [self endElement:[NSString stringWithFormat:@"%@:CallOptions",prefix]];
+    }else{
+        [self startElement:@"CallOptions"];
+        [self addElement:@"client" elemValue:clientId];
+        [self endElement:@"CallOptions"];
+    }
+
 }
 
 - (void)writeMruHeader:(BOOL)updateMru {

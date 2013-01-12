@@ -144,6 +144,8 @@
 - (void)setPassword:(NSString *)newPassword forUserId:(NSString *)userId;
 
 
+- (NSDictionary *)describeMetaDataWithType:(NSString*)qType folder:(NSString*)folder;
+
 // Information about the current session
 //////////////////////////////////////////////////////////////////////////////////////
 // returns true if we've performed a login request and it succeeded.
@@ -174,5 +176,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 @property (assign) BOOL cacheDescribes;
 - (void)flushCachedDescribes;
+
+
 
 @end
