@@ -34,17 +34,36 @@
 
 - (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix{
     
+	return [self initWithSessionAndMruHeaders:sessionId mru:mru clientId:clientId namespaceUri:primaryNamespceUri prefix:prefix organisationId:nil portalId:nil];
+}
+
+- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix organisationId:(NSString*)orgId portalId:(NSString*)pid{
+    
 	self = [super init];
 
 	[self start:primaryNamespceUri prefix:prefix];
     if (![prefix isEqualToString:@""]) {
         [self writeSessionHeader:sessionId prefix:prefix];
         [self writeCallOptionsHeader:clientId  prefix:prefix];
+        if (orgId!=nil) {
+            [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
+        }else{
+            if (pid!=nil) {
+                [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
+            }
+        }
         [self writeMruHeader:mru];
         [self moveToBody];
     }else{
        	[self writeSessionHeader:sessionId];
         [self writeCallOptionsHeader:clientId];
+        if (orgId!=nil) {
+            [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
+        }else{
+            if (pid!=nil) {
+                [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
+            }
+        }
         [self writeMruHeader:mru];
         [self moveToBody];
     }

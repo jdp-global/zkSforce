@@ -123,6 +123,14 @@ static const int SAVE_BATCH_SIZE = 25;
     return lr;
 }
 
+- (ZKLoginResult *)login:(NSString *)un password:(NSString *)pwd organisationId:(NSString*)orgId portalId:(NSString*)pid{
+    ZKSoapLogin *auth = [ZKSoapLogin soapLoginWithUsername:un password:pwd authHost:[NSURL URLWithString:authEndpointUrl] apiVersion:preferedApiVersion clientId:clientId organisationId:orgId portalId:pid];
+	ZKLoginResult *lr = [auth login];
+    [self setAuthenticationInfo:auth];
+    self.userInfo = lr.userInfo;
+    return lr;
+}
+
 - (void)loginFromOAuthCallbackUrl:(NSString *)callbackUrl oAuthConsumerKey:(NSString *)oauthClientId{
     ZKOAuthInfo *auth = [ZKOAuthInfo oauthInfoFromCallbackUrl:[NSURL URLWithString:callbackUrl] clientId:oauthClientId];
     [auth setApiVersion:preferedApiVersion];
@@ -335,6 +343,91 @@ static const int SAVE_BATCH_SIZE = 25;
     
     return dict;
 }
+
+
+/*
+ 
+ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:met="http://soap.sforce.com/2006/04/metadata">
+ <soapenv:Header>
+ <met:CallOptions>
+ <met:client>?</met:client>
+ </met:CallOptions>
+ <met:SessionHeader>
+ <met:sessionId>?</met:sessionId>
+ </met:SessionHeader>
+ </soapenv:Header>
+ <soapenv:Body>
+ <met:retrieve>
+ <met:retrieveRequest>
+ <met:apiVersion>?</met:apiVersion>
+ <!--Zero or more repetitions:-->
+ <met:packageNames>?</met:packageNames>
+ <met:singlePackage>?</met:singlePackage>
+ <!--Zero or more repetitions:-->
+ <met:specificFiles>?</met:specificFiles>
+ <!--Optional:-->
+ <met:unpackaged>
+ <!--Optional:-->
+ <met:fullName>?</met:fullName>
+ <!--Optional:-->
+ <met:apiAccessLevel>?</met:apiAccessLevel>
+ <!--Optional:-->
+ <met:description>?</met:description>
+ <!--Optional:-->
+ <met:namespacePrefix>?</met:namespacePrefix>
+ <!--Zero or more repetitions:-->
+ <met:objectPermissions>
+ <!--Optional:-->
+ <met:allowCreate>?</met:allowCreate>
+ <!--Optional:-->
+ <met:allowDelete>?</met:allowDelete>
+ <!--Optional:-->
+ <met:allowEdit>?</met:allowEdit>
+ <!--Optional:-->
+ <met:allowRead>?</met:allowRead>
+ <!--Optional:-->
+ <met:modifyAllRecords>?</met:modifyAllRecords>
+ <met:object>?</met:object>
+ <!--Optional:-->
+ <met:viewAllRecords>?</met:viewAllRecords>
+ </met:objectPermissions>
+ <!--Optional:-->
+ <met:postInstallClass>?</met:postInstallClass>
+ <!--Optional:-->
+ <met:setupWeblink>?</met:setupWeblink>
+ <!--Zero or more repetitions:-->
+ <met:types>
+ <!--Zero or more repetitions:-->
+ <met:members>?</met:members>
+ <met:name>?</met:name>
+ </met:types>
+ <!--Optional:-->
+ <met:uninstallClass>?</met:uninstallClass>
+ <met:version>?</met:version>
+ </met:unpackaged>
+ </met:retrieveRequest>
+ </met:retrieve>
+ </soapenv:Body>
+ </soapenv:Envelope>
+ 
+ */
+- (NSDictionary *)retrieveRequest{
+ 
+	if (!authSource) return nil;
+	[self checkSession];
+	ZKGenericEnvelope *env = [[[ZKGenericEnvelope alloc] initWithSessionAndMruHeaders:[authSource sessionId] mru:NO clientId:clientId namespaceUri:@"http://soap.sforce.com/2006/04/metadata" prefix:@"met"] autorelease];
+
+    [env startElement:@"met:retrieve"];
+    [env startElement:@"met:retrieveRequest"];
+    [env addElement:@"met:apiVersion" elemValue:[NSNumber numberWithInt:preferedApiVersion]];
+    [env endElement:@"met:retrieveRequest"];
+    [env endElement:@"met:retrieve"];
+	[env endElement:@"s:Body"];
+	NSDictionary *dict  = [self fireMetaDataRequest:[env end]];
+ 
+    return dict;
+}
+
 
 - (NSDictionary *)listMetaDataWithType:(NSString*)qType folder:(NSString*)folder {
 	if (!authSource) return nil;

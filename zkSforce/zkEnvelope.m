@@ -85,6 +85,35 @@ enum envState {
 
 }
 
+
+- (void)writeLoginScopeHeaderWithPortalId:(NSString *)portalId  organisation:(NSString*)oid prefix:(NSString*)prefix  {
+	if ([portalId length] == 0) return;
+	[self moveToHeaders];
+    if (![prefix isEqualToString:@""]) {
+        [self startElement:[NSString stringWithFormat:@"%@:LoginScopeHeader",prefix]];
+        if (oid!=nil) {
+           [self addElement:[NSString stringWithFormat:@"%@:organizationId",prefix]  elemValue:oid]; 
+        }
+        if (portalId!=nil) {
+            [self addElement:[NSString stringWithFormat:@"%@:portalId",prefix]  elemValue:portalId];
+        }
+        
+        [self endElement:[NSString stringWithFormat:@"%@:LoginScopeHeader",prefix]];
+    }else{
+        [self startElement:@"LoginScopeHeader"];
+        if (oid!=nil) {
+            [self addElement:@"organizationId"  elemValue:oid];
+        }
+        if (portalId!=nil) {
+            [self addElement:@"portalId"  elemValue:portalId];
+        }
+        [self endElement:@"LoginScopeHeader"];
+    }
+    
+}
+
+
+
 - (void)writeMruHeader:(BOOL)updateMru {
 	if (!updateMru) return;
 	[self moveToHeaders];

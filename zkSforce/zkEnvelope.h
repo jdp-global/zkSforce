@@ -35,6 +35,7 @@
 - (void)writeCallOptionsHeader:(NSString *)clientId  prefix:(NSString*)prefix;
 - (void)writeMruHeader:(BOOL)updateMru;
 
+- (void)writeLoginScopeHeaderWithPortalId:(NSString *)portalId  organisation:(NSString*)oid prefix:(NSString*)prefix;
 - (void) moveToBody;
 - (void) startElement:(NSString *)elemName;
 - (void) endElement:(NSString *)elemName;

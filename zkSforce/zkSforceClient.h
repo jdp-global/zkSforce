@@ -71,6 +71,9 @@
 // append it to the password parameter.
 - (ZKLoginResult *)login:(NSString *)username password:(NSString *)password;
 
+
+- (ZKLoginResult *)login:(NSString *)un password:(NSString *)pwd organisationId:(NSString*)orgId portalId:(NSString*)pid;;
+
 // Initialize the authentication info from the parameters contained in the OAuth
 // completion callback Uri passed in.
 // call this when the oauth flow is complete, this doesn't start the oauth flow.

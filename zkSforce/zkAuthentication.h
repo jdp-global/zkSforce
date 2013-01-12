@@ -41,6 +41,9 @@
     NSDate *sessionExpiresAt;
     NSString *sessionId;
     NSString *clientId;
+    NSString *organisationId;
+    NSString *portalId;
+    
 }
 
 @end
@@ -71,7 +74,7 @@
 }
 
 +(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid;
-
++(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid organisationId:(NSString*)orgId portalId:(NSString*)pid;
 -(ZKLoginResult *)login;
 
 @end

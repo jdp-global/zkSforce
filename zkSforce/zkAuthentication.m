@@ -154,18 +154,30 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 @end
 
 @implementation ZKSoapLogin
+-(id)initWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid{
+    return [self initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid organisationId:nil portalId:nil];
+}
 
--(id)initWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid {
+-(id)initWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid organisationId:(NSString*)oid portalId:(NSString*)pid{
     self = [super init];
+    portalId = nil;
+    organisationId = nil;
+    if (pid!=nil) portalId = [pid copy];
+    if (oid!=nil) organisationId = [oid copy];
+    
     username = [un retain];
     password = [pwd retain];
     clientId = [cid retain];
+    organisationId = [oid copy];
     client = [[ZKBaseClient alloc] init];
 	client.endpointUrl = [NSURL URLWithString:[NSString stringWithFormat:@"/services/Soap/u/%d.0", v] relativeToURL:auth];
     return self;
 }
 
 -(void)dealloc {
+    if (organisationId!=nil) [organisationId release];
+    if (portalId!=nil)  [portalId release];
+    [clientId release];
     [username release];
     [password release];
     [client release];
@@ -175,9 +187,32 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 -(void)refresh {
     [self login];
 }
-
+/*
+ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:partner.soap.sforce.com">
+ <soapenv:Header>
+ <urn:CallOptions>
+ <urn:client>?</urn:client>
+ <urn:defaultNamespace>?</urn:defaultNamespace>
+ </urn:CallOptions>
+ <urn:LoginScopeHeader>
+ <urn:organizationId>?</urn:organizationId>
+ <!--Optional:-->
+ <urn:portalId>?</urn:portalId>
+ </urn:LoginScopeHeader>
+ </soapenv:Header>
+ <soapenv:Body>
+ <urn:login>
+ <urn:username>?</urn:username>
+ <urn:password>?</urn:password>
+ </urn:login>
+ </soapenv:Body>
+ </soapenv:Envelope>
+ */
 -(ZKLoginResult *)login {
 	ZKEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:nil clientId:clientId];
+    
+    //[env startElement:@"login"];
+    
 	[env startElement:@"login"];
 	[env addElement:@"username" elemValue:username];
 	[env addElement:@"password" elemValue:password];
@@ -201,6 +236,10 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 
 +(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid {
     return [[[ZKSoapLogin alloc] initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid] autorelease];
+}
+
++(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid organisationId:(NSString*)orgId portalId:(NSString*)pid{
+    return [[[ZKSoapLogin alloc] initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid organisationId:orgId portalId:pid] autorelease];
 }
 
 @end
