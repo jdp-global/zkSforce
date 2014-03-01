@@ -153,6 +153,13 @@ enum envState {
     [self addElement:elemName elemValue:elemValue nillable:NO optional:NO];
 }
 
+- (void)addSoapPayload:(NSString *)elemName payloadValue:(NSString *)payloadValue {
+	[self startElement:elemName];
+    [env appendFormat:@"%@", payloadValue];
+	[self endElement:elemName];
+}
+
+
 - (void) addElement:(NSString *)elemName elemValue:(id)elemValue nillable:(BOOL)nillable optional:(BOOL)optional {
     if (elemValue == nil) {
         if (optional) return;

@@ -24,6 +24,7 @@
 #import "zkBaseClient.h"
 #import "zkSoapException.h"
 #import "zkParser.h"
+#import "XMLReader.h"
 
 @implementation ZKBaseClient
 

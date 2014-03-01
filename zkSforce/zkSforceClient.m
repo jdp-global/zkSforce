@@ -1,21 +1,21 @@
 // Copyright (c) 2006-2013 Simon Fell
 //
-// Permission is hereby granted, free of charge, to any person obtaining a 
-// copy of this software and associated documentation files (the "Software"), 
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-// and/or sell copies of the Software, and to permit persons to whom the 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
 // Software is furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included 
+// The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
 
@@ -56,22 +56,22 @@
 
 static const int SAVE_BATCH_SIZE = 25;
 
-@interface ZKSforceClient(Private)
+@interface ZKSforceClient (Private)
 - (NSArray *)sobjectsImpl:(NSArray *)objects name:(NSString *)elemName;
-@property (retain, getter=currentUserInfo) ZKUserInfo *userInfo;
--(void)addHeader:(NSObject<ZKXMLSerializable> *)header name:(NSString *)headerName toEnvelope:(ZKEnvelope *)env;
+@property (retain, getter = currentUserInfo) ZKUserInfo *userInfo;
+- (void)addHeader:(NSObject <ZKXMLSerializable> *)header name:(NSString *)headerName toEnvelope:(ZKEnvelope *)env;
 @end
 
 @implementation ZKSforceClient
 
-@synthesize preferedApiVersion, cacheDescribes, lastLimitInfoHeader=limitInfo;
+@synthesize preferedApiVersion, cacheDescribes, lastLimitInfoHeader = limitInfo;
 @synthesize callOptions, packageVersionHeader, localeOptions, assignmentRuleHeader, mruHeader, allowFieldTruncationHeader;
 @synthesize disableFeedTrackingHeader, streamingEnabledHeader, allOrNoneHeader, debuggingHeader, emailHeader, ownerChangeOptions;
 @synthesize userTerritoryDeleteHeader, queryOptions;
 
 - (id)init {
 	self = [super init];
-	preferedApiVersion = 30;
+	preferedApiVersion = 29;
 	[self setLoginProtocolAndHost:@"https://www.salesforce.com"];
 	cacheDescribes = NO;
 	describes = [[NSMutableDictionary alloc] init];
@@ -82,22 +82,22 @@ static const int SAVE_BATCH_SIZE = 25;
 	[authEndpointUrl release];
 	[userInfo release];
 	[describes release];
-    [authSource release];
-    [limitInfo release];
-    self.callOptions = nil;
-    self.packageVersionHeader = nil;
-    self.localeOptions = nil;
-    self.assignmentRuleHeader = nil;
-    self.mruHeader = nil;
-    self.allowFieldTruncationHeader = nil;
-    self.disableFeedTrackingHeader = nil;
-    self.streamingEnabledHeader = nil;
-    self.allOrNoneHeader = nil;
-    self.debuggingHeader = nil;
-    self.emailHeader = nil;
-    self.ownerChangeOptions = nil;
-    self.userTerritoryDeleteHeader = nil;
-    self.queryOptions = nil;
+	[authSource release];
+	[limitInfo release];
+	self.callOptions = nil;
+	self.packageVersionHeader = nil;
+	self.localeOptions = nil;
+	self.assignmentRuleHeader = nil;
+	self.mruHeader = nil;
+	self.allowFieldTruncationHeader = nil;
+	self.disableFeedTrackingHeader = nil;
+	self.streamingEnabledHeader = nil;
+	self.allOrNoneHeader = nil;
+	self.debuggingHeader = nil;
+	self.emailHeader = nil;
+	self.ownerChangeOptions = nil;
+	self.userTerritoryDeleteHeader = nil;
+	self.queryOptions = nil;
 	[super dealloc];
 }
 
@@ -108,36 +108,36 @@ static const int SAVE_BATCH_SIZE = 25;
 	rhs->endpointUrl = [endpointUrl copy];
 	rhs->userInfo = [userInfo retain];
 	rhs->preferedApiVersion = preferedApiVersion;
-    rhs->authSource = [authSource retain];
-    rhs->limitInfo = [limitInfo retain];
+	rhs->authSource = [authSource retain];
+	rhs->limitInfo = [limitInfo retain];
 	[rhs setCacheDescribes:cacheDescribes];
-    rhs.callOptions = self.callOptions;
-    rhs.packageVersionHeader = self.packageVersionHeader;
-    rhs.localeOptions = self.localeOptions;
-    rhs.assignmentRuleHeader = self.assignmentRuleHeader;
-    rhs.mruHeader = self.mruHeader;
-    rhs.allowFieldTruncationHeader = self.allowFieldTruncationHeader;
-    rhs.disableFeedTrackingHeader = self.disableFeedTrackingHeader;
-    rhs.streamingEnabledHeader = self.streamingEnabledHeader;
-    rhs.allOrNoneHeader = self.allOrNoneHeader;
-    rhs.debuggingHeader = self.debuggingHeader;
-    rhs.emailHeader = self.emailHeader;
-    rhs.ownerChangeOptions = self.ownerChangeOptions;
-    rhs.userTerritoryDeleteHeader = self.userTerritoryDeleteHeader;
-    rhs.queryOptions = self.queryOptions;
-    rhs.delegate = delegate;
+	rhs.callOptions = self.callOptions;
+	rhs.packageVersionHeader = self.packageVersionHeader;
+	rhs.localeOptions = self.localeOptions;
+	rhs.assignmentRuleHeader = self.assignmentRuleHeader;
+	rhs.mruHeader = self.mruHeader;
+	rhs.allowFieldTruncationHeader = self.allowFieldTruncationHeader;
+	rhs.disableFeedTrackingHeader = self.disableFeedTrackingHeader;
+	rhs.streamingEnabledHeader = self.streamingEnabledHeader;
+	rhs.allOrNoneHeader = self.allOrNoneHeader;
+	rhs.debuggingHeader = self.debuggingHeader;
+	rhs.emailHeader = self.emailHeader;
+	rhs.ownerChangeOptions = self.ownerChangeOptions;
+	rhs.userTerritoryDeleteHeader = self.userTerritoryDeleteHeader;
+	rhs.queryOptions = self.queryOptions;
+	rhs.delegate = delegate;
 	return rhs;
 }
 
--(NSObject<ZKAuthenticationInfo> *)authenticationInfo {
-    return authSource;
+- (NSObject <ZKAuthenticationInfo> *)authenticationInfo {
+	return authSource;
 }
 
--(void)setAuthenticationInfo:(NSObject<ZKAuthenticationInfo> *)authenticationInfo {
-    [authSource autorelease];
-    authSource = [authenticationInfo retain];
-    self.endpointUrl = [authSource instanceUrl];
-    self.userInfo = nil;
+- (void)setAuthenticationInfo:(NSObject <ZKAuthenticationInfo> *)authenticationInfo {
+	[authSource autorelease];
+	authSource = [authenticationInfo retain];
+	self.endpointUrl = [authSource instanceUrl];
+	self.userInfo = nil;
 }
 
 - (void)flushCachedDescribes {
@@ -154,53 +154,53 @@ static const int SAVE_BATCH_SIZE = 25;
 - (void)setLoginProtocolAndHost:(NSString *)protocolAndHost andVersion:(int)version {
 	[authEndpointUrl release];
 	authEndpointUrl = [[NSString stringWithFormat:@"%@/services/Soap/u/%d.0", protocolAndHost, version] retain];
-    preferedApiVersion = version;
+	preferedApiVersion = version;
 }
 
 - (NSURL *)authEndpointUrl {
 	return [NSURL URLWithString:authEndpointUrl];
 }
 
--(ZKLoginResult *)soapLogin:(ZKSoapLogin *)auth {
+- (ZKLoginResult *)soapLogin:(ZKSoapLogin *)auth {
 	ZKLoginResult *lr = [auth login];
-    [self setAuthenticationInfo:auth];
-    self.userInfo = lr.userInfo;
-    return lr;
+	[self setAuthenticationInfo:auth];
+	self.userInfo = lr.userInfo;
+	return lr;
 }
 
 - (ZKLoginResult *)login:(NSString *)un password:(NSString *)pwd {
-    ZKSoapLogin *auth = [ZKSoapLogin soapLoginWithUsername:un password:pwd authHost:[NSURL URLWithString:authEndpointUrl] apiVersion:preferedApiVersion clientId:self.clientId delegate:delegate];
-    return [self soapLogin:auth];
+	ZKSoapLogin *auth = [ZKSoapLogin soapLoginWithUsername:un password:pwd authHost:[NSURL URLWithString:authEndpointUrl] apiVersion:preferedApiVersion clientId:self.clientId delegate:delegate];
+	return [self soapLogin:auth];
 }
 
-- (void)loginFromOAuthCallbackUrl:(NSString *)callbackUrl oAuthConsumerKey:(NSString *)oauthClientId{
-    ZKOAuthInfo *auth = [ZKOAuthInfo oauthInfoFromCallbackUrl:[NSURL URLWithString:callbackUrl] clientId:oauthClientId];
-    [auth setApiVersion:preferedApiVersion];
-    [self setAuthenticationInfo:auth];
+- (void)loginFromOAuthCallbackUrl:(NSString *)callbackUrl oAuthConsumerKey:(NSString *)oauthClientId {
+	ZKOAuthInfo *auth = [ZKOAuthInfo oauthInfoFromCallbackUrl:[NSURL URLWithString:callbackUrl] clientId:oauthClientId];
+	[auth setApiVersion:preferedApiVersion];
+	[self setAuthenticationInfo:auth];
 }
 
 - (void)loginWithRefreshToken:(NSString *)refreshToken authUrl:(NSURL *)authUrl oAuthConsumerKey:(NSString *)cid {
-    ZKOAuthInfo *auth = [[[ZKOAuthInfo alloc] initWithRefreshToken:refreshToken authHost:authUrl sessionId:nil instanceUrl:nil clientId:cid] autorelease];
-    [auth setApiVersion:preferedApiVersion];
-    [self setAuthenticationInfo:auth];
-    [self checkSession];
+	ZKOAuthInfo *auth = [[[ZKOAuthInfo alloc] initWithRefreshToken:refreshToken authHost:authUrl sessionId:nil instanceUrl:nil clientId:cid] autorelease];
+	[auth setApiVersion:preferedApiVersion];
+	[self setAuthenticationInfo:auth];
+	[self checkSession];
 }
 
 - (ZKLoginResult *)portalLogin:(NSString *)username password:(NSString *)password orgId:(NSString *)orgId portalId:(NSString *)portalId {
-    ZKSoapPortalLogin *auth = [ZKSoapPortalLogin soapPortalLoginWithUsername:username
-                                                                    password:password
-                                                                    authHost:[NSURL URLWithString:authEndpointUrl]
-                                                                  apiVersion:preferedApiVersion
-                                                                    clientId:self.clientId
-                                                                    delegate:delegate
-                                                                       orgId:orgId
-                                                                    portalId:portalId];
-    return [self soapLogin:auth];
+	ZKSoapPortalLogin *auth = [ZKSoapPortalLogin soapPortalLoginWithUsername:username
+	                                                                password:password
+	                                                                authHost:[NSURL URLWithString:authEndpointUrl]
+	                                                              apiVersion:preferedApiVersion
+	                                                                clientId:self.clientId
+	                                                                delegate:delegate
+	                                                                   orgId:orgId
+	                                                                portalId:portalId];
+	return [self soapLogin:auth];
 }
 
--(void)setUserInfo:(ZKUserInfo *)ui {
-    [userInfo autorelease];
-    userInfo = [ui retain];
+- (void)setUserInfo:(ZKUserInfo *)ui {
+	[userInfo autorelease];
+	userInfo = [ui retain];
 }
 
 - (BOOL)loggedIn {
@@ -208,13 +208,13 @@ static const int SAVE_BATCH_SIZE = 25;
 }
 
 - (void)checkSession {
-    if ([authSource refreshIfNeeded])
-        self.endpointUrl = [authSource instanceUrl];
+	if ([authSource refreshIfNeeded])
+		self.endpointUrl = [authSource instanceUrl];
 }
 
 - (ZKUserInfo *)currentUserInfo {
-    if (userInfo == nil)
-        userInfo = [[self getUserInfo] retain];
+	if (userInfo == nil)
+		userInfo = [[self getUserInfo] retain];
 	return userInfo;
 }
 
@@ -227,132 +227,132 @@ static const int SAVE_BATCH_SIZE = 25;
 	return [authSource sessionId];
 }
 
--(BOOL)updateMru {
-    return self.mruHeader == nil ? FALSE : self.mruHeader.updateMru;
+- (BOOL)updateMru {
+	return self.mruHeader == nil ? FALSE : self.mruHeader.updateMru;
 }
 
--(void)setUpdateMru:(BOOL)mru {
-    if (self.mruHeader == nil)
-        self.mruHeader = [[[ZKMruHeader alloc] init] autorelease];
-    self.mruHeader.updateMru = mru;
+- (void)setUpdateMru:(BOOL)mru {
+	if (self.mruHeader == nil)
+		self.mruHeader = [[[ZKMruHeader alloc] init] autorelease];
+	self.mruHeader.updateMru = mru;
 }
 
--(NSString *)clientId {
-    return self.callOptions.client;
+- (NSString *)clientId {
+	return self.callOptions.client;
 }
 
--(void)setClientId:(NSString *)newClientId {
-    if (self.callOptions == nil)
-        self.callOptions = [[[ZKCallOptions alloc] init] autorelease];
-    self.callOptions.client = newClientId;
+- (void)setClientId:(NSString *)newClientId {
+	if (self.callOptions == nil)
+		self.callOptions = [[[ZKCallOptions alloc] init] autorelease];
+	self.callOptions.client = newClientId;
 }
 
--(NSNumber *)queryBatchSize {
-    return [NSNumber numberWithInteger:self.queryOptions.batchSize];
+- (NSNumber *)queryBatchSize {
+	return [NSNumber numberWithInteger:self.queryOptions.batchSize];
 }
 
--(void)setQueryBatchSize:(NSNumber *)newBatchSize {
-    if (newBatchSize == nil)
-        self.queryOptions = nil;
-    else {
-        if (self.queryOptions == nil)
-            self.queryOptions = [[[ZKQueryOptions alloc] init] autorelease];
-        self.queryOptions.batchSize = [newBatchSize integerValue];
-    }
+- (void)setQueryBatchSize:(NSNumber *)newBatchSize {
+	if (newBatchSize == nil)
+		self.queryOptions = nil;
+	else {
+		if (self.queryOptions == nil)
+			self.queryOptions = [[[ZKQueryOptions alloc] init] autorelease];
+		self.queryOptions.batchSize = [newBatchSize integerValue];
+	}
 }
 
 - (NSString *)serverHostAbbriviation {
-    NSString *host = [endpointUrl host];
-    NSString *hostLower = [host lowercaseString];
-    NSArray *suffixes = [NSArray arrayWithObjects:@".salesforce.com", @".force.com", nil];
-    for (NSString *suffix in suffixes) {
-        if ([hostLower hasSuffix:suffix]) {
-            // remove the expected suffix from the host name.
-            host = [host substringToIndex:[host length] - [suffix length]];
-            // remove the trailing -api if there is one.
-            return [[host lowercaseString] hasSuffix:@"-api"] ? [host substringToIndex:[host length] - 4] : host;
-        }
-    }
-    return host;
+	NSString *host = [endpointUrl host];
+	NSString *hostLower = [host lowercaseString];
+	NSArray *suffixes = [NSArray arrayWithObjects:@".salesforce.com", @".force.com", nil];
+	for (NSString *suffix in suffixes) {
+		if ([hostLower hasSuffix:suffix]) {
+			// remove the expected suffix from the host name.
+			host = [host substringToIndex:[host length] - [suffix length]];
+			// remove the trailing -api if there is one.
+			return [[host lowercaseString] hasSuffix:@"-api"] ? [host substringToIndex:[host length] - 4] : host;
+		}
+	}
+	return host;
 }
 
--(void)addCallOptions:(ZKEnvelope *)env {
-    [self addHeader:self.callOptions name:@"CallOptions" toEnvelope:env];
+- (void)addCallOptions:(ZKEnvelope *)env {
+	[self addHeader:self.callOptions name:@"CallOptions" toEnvelope:env];
 }
 
--(void)addPackageVersionHeader:(ZKEnvelope *)env {
-    [self addHeader:self.packageVersionHeader name:@"PackageVersionHeader" toEnvelope:env];
+- (void)addPackageVersionHeader:(ZKEnvelope *)env {
+	[self addHeader:self.packageVersionHeader name:@"PackageVersionHeader" toEnvelope:env];
 }
 
--(void)addLocaleOptions:(ZKEnvelope *)env {
-    [self addHeader:self.localeOptions name:@"LocaleHeader" toEnvelope:env];
+- (void)addLocaleOptions:(ZKEnvelope *)env {
+	[self addHeader:self.localeOptions name:@"LocaleHeader" toEnvelope:env];
 }
 
--(void)addAssignmentRuleHeader:(ZKEnvelope *)env {
-    [self addHeader:self.assignmentRuleHeader name:@"AssignmentRuleHeader" toEnvelope:env];
+- (void)addAssignmentRuleHeader:(ZKEnvelope *)env {
+	[self addHeader:self.assignmentRuleHeader name:@"AssignmentRuleHeader" toEnvelope:env];
 }
 
--(void)addMruHeader:(ZKEnvelope *)env {
-    [self addHeader:self.mruHeader name:@"MruHeader" toEnvelope:env];
+- (void)addMruHeader:(ZKEnvelope *)env {
+	[self addHeader:self.mruHeader name:@"MruHeader" toEnvelope:env];
 }
 
--(void)addAllowFieldTruncationHeader:(ZKEnvelope *)env {
-    [self addHeader:self.allowFieldTruncationHeader name:@"AllowFieldTruncationHeader" toEnvelope:env];
+- (void)addAllowFieldTruncationHeader:(ZKEnvelope *)env {
+	[self addHeader:self.allowFieldTruncationHeader name:@"AllowFieldTruncationHeader" toEnvelope:env];
 }
 
--(void)addDisableFeedTrackingHeader:(ZKEnvelope *)env {
-    [self addHeader:self.disableFeedTrackingHeader name:@"DisableFeedTrackingHeader" toEnvelope:env];
+- (void)addDisableFeedTrackingHeader:(ZKEnvelope *)env {
+	[self addHeader:self.disableFeedTrackingHeader name:@"DisableFeedTrackingHeader" toEnvelope:env];
 }
 
--(void)addStreamingEnabledHeader:(ZKEnvelope *)env {
-    [self addHeader:self.streamingEnabledHeader name:@"StreamingEnabledHeader" toEnvelope:env];
+- (void)addStreamingEnabledHeader:(ZKEnvelope *)env {
+	[self addHeader:self.streamingEnabledHeader name:@"StreamingEnabledHeader" toEnvelope:env];
 }
 
--(void)addAllOrNoneHeader:(ZKEnvelope *)env {
-    [self addHeader:self.allOrNoneHeader name:@"AllOrNoneHeader" toEnvelope:env];
+- (void)addAllOrNoneHeader:(ZKEnvelope *)env {
+	[self addHeader:self.allOrNoneHeader name:@"AllOrNoneHeader" toEnvelope:env];
 }
 
--(void)addDebuggingHeader:(ZKEnvelope *)env {
-    [self addHeader:self.debuggingHeader name:@"DebuggingHeader" toEnvelope:env];
+- (void)addDebuggingHeader:(ZKEnvelope *)env {
+	[self addHeader:self.debuggingHeader name:@"DebuggingHeader" toEnvelope:env];
 }
 
--(void)addEmailHeader:(ZKEnvelope *)env {
-    [self addHeader:self.emailHeader name:@"EmailHeader" toEnvelope:env];
+- (void)addEmailHeader:(ZKEnvelope *)env {
+	[self addHeader:self.emailHeader name:@"EmailHeader" toEnvelope:env];
 }
 
--(void)addOwnerChangeOptions:(ZKEnvelope *)env {
-    [self addHeader:self.ownerChangeOptions name:@"OwnerChangeOptions" toEnvelope:env];
+- (void)addOwnerChangeOptions:(ZKEnvelope *)env {
+	[self addHeader:self.ownerChangeOptions name:@"OwnerChangeOptions" toEnvelope:env];
 }
 
--(void)addUserTerritoryDeleteHeader:(ZKEnvelope *)env {
-    [self addHeader:self.userTerritoryDeleteHeader name:@"UserTerritoryDeleteHeader" toEnvelope:env];
+- (void)addUserTerritoryDeleteHeader:(ZKEnvelope *)env {
+	[self addHeader:self.userTerritoryDeleteHeader name:@"UserTerritoryDeleteHeader" toEnvelope:env];
 }
 
--(void)addQueryOptions:(ZKEnvelope *)env {
-    [self addHeader:self.queryOptions name:@"QueryOptions" toEnvelope:env];
+- (void)addQueryOptions:(ZKEnvelope *)env {
+	[self addHeader:self.queryOptions name:@"QueryOptions" toEnvelope:env];
 }
 
 - (NSArray *)describeGlobal {
-	if(!authSource) return NULL;
+	if (!authSource) return NULL;
 	[self checkSession];
 	if (cacheDescribes) {
-		NSArray *dg = [describes objectForKey:@"describe__global"];	// won't be an sfdc object ever called this.
+		NSArray *dg = [describes objectForKey:@"describe__global"]; // won't be an sfdc object ever called this.
 		if (dg != nil) return dg;
 	}
-	
-	ZKEnvelope * env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
-    [self addCallOptions:env];
-    [self addPackageVersionHeader:env];
-    [self addLocaleOptions:env];
-    [env moveToBody];
+
+	ZKEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
+	[self addCallOptions:env];
+	[self addPackageVersionHeader:env];
+	[self addLocaleOptions:env];
+	[env moveToBody];
 	[env startElement:@"describeGlobal"];
 	[env endElement:@"describeGlobal"];
-	
-    zkElement * rr = [self sendRequest:[env end] name:NSStringFromSelector(_cmd)];
+
+	zkElement *rr = [self sendRequest:[env end] name:NSStringFromSelector(_cmd)];
 	NSArray *results = [[rr childElement:@"result"] childElements:@"sobjects"];
 	NSMutableArray *types = [NSMutableArray arrayWithCapacity:[results count]];
-    for (zkElement *res in results) {
-		ZKDescribeGlobalSObject * d = [[ZKDescribeGlobalSObject alloc] initWithXmlElement:res];
+	for (zkElement *res in results) {
+		ZKDescribeGlobalSObject *d = [[ZKDescribeGlobalSObject alloc] initWithXmlElement:res];
 		[types addObject:d];
 		[d release];
 	}
@@ -365,25 +365,25 @@ static const int SAVE_BATCH_SIZE = 25;
 - (ZKDescribeSObject *)describeSObject:(NSString *)sobjectName {
 	if (!authSource) return NULL;
 	if (cacheDescribes) {
-		ZKDescribeSObject * desc = [describes objectForKey:[sobjectName lowercaseString]];
+		ZKDescribeSObject *desc = [describes objectForKey:[sobjectName lowercaseString]];
 		if (desc != nil) return desc;
 	}
 	[self checkSession];
-	
-	ZKEnvelope * env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
-    [self addCallOptions:env];
-    [self addPackageVersionHeader:env];
-    [self addLocaleOptions:env];
-    [env moveToBody];
+
+	ZKEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
+	[self addCallOptions:env];
+	[self addPackageVersionHeader:env];
+	[self addLocaleOptions:env];
+	[env moveToBody];
 	[env startElement:@"describeSObject"];
 	[env addElement:@"SobjectType" elemValue:sobjectName];
 	[env endElement:@"describeSObject"];
-	
+
 	zkElement *dr = [self sendRequest:[env end] name:NSStringFromSelector(_cmd)];
 	zkElement *descResult = [dr childElement:@"result"];
 	ZKDescribeSObject *desc = [[[ZKDescribeSObject alloc] initWithXmlElement:descResult] autorelease];
 	[env release];
-	if (cacheDescribes) 
+	if (cacheDescribes)
 		[describes setObject:desc forKey:[sobjectName lowercaseString]];
 	return desc;
 }
@@ -391,14 +391,14 @@ static const int SAVE_BATCH_SIZE = 25;
 - (NSArray *)search:(NSString *)sosl {
 	if (!authSource) return NULL;
 	[self checkSession];
-	ZKEnvelope * env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
-    [self addCallOptions:env];
-    [self addPackageVersionHeader:env];
-    [env moveToBody];
+	ZKEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
+	[self addCallOptions:env];
+	[self addPackageVersionHeader:env];
+	[env moveToBody];
 	[env startElement:@"search"];
 	[env addElement:@"searchString" elemValue:sosl];
 	[env endElement:@"search"];
-	
+
 	zkElement *sr = [self sendRequest:[env end] name:NSStringFromSelector(_cmd)];
 	zkElement *searchResult = [sr childElement:@"result"];
 	NSArray *records = [searchResult childElements:@"searchRecords"];
@@ -418,13 +418,13 @@ static const int SAVE_BATCH_SIZE = 25;
 }
 
 - (NSArray *)sobjectsImpl:(NSArray *)objects name:(NSString *)elemName {
-	if(!authSource) return NULL;
+	if (!authSource) return NULL;
 	[self checkSession];
-	
+
 	// if more than we can do in one go, break it up.
 	if ([objects count] > SAVE_BATCH_SIZE) {
 		NSMutableArray *allResults = [NSMutableArray arrayWithCapacity:[objects count]];
-		NSRange rng = {0, MIN(SAVE_BATCH_SIZE, [objects count])};
+		NSRange rng = { 0, MIN(SAVE_BATCH_SIZE, [objects count]) };
 		while (rng.location < [objects count]) {
 			[allResults addObjectsFromArray:[self sobjectsImpl:[objects subarrayWithRange:rng] name:elemName]];
 			rng.location += rng.length;
@@ -432,22 +432,22 @@ static const int SAVE_BATCH_SIZE = 25;
 		}
 		return allResults;
 	}
-	ZKEnvelope * env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
-    [self addCallOptions:env];
-    [self addAssignmentRuleHeader:env];
-    [self addMruHeader:env];
-    [self addAllowFieldTruncationHeader:env];
-    [self addDisableFeedTrackingHeader:env];
-    [self addStreamingEnabledHeader:env];
-    [self addAllOrNoneHeader:env];
-    [self addDebuggingHeader:env];
-    [self addPackageVersionHeader:env];
-    [self addEmailHeader:env];
-    if ([elemName isEqualToString:@"update"])
-        [self addOwnerChangeOptions:env];
-    [env moveToBody];
+	ZKEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
+	[self addCallOptions:env];
+	[self addAssignmentRuleHeader:env];
+	[self addMruHeader:env];
+	[self addAllowFieldTruncationHeader:env];
+	[self addDisableFeedTrackingHeader:env];
+	[self addStreamingEnabledHeader:env];
+	[self addAllOrNoneHeader:env];
+	[self addDebuggingHeader:env];
+	[self addPackageVersionHeader:env];
+	[self addEmailHeader:env];
+	if ([elemName isEqualToString:@"update"])
+		[self addOwnerChangeOptions:env];
+	[env moveToBody];
 	[env startElement:elemName];
-    for (ZKSObject *o in objects) 
+	for (ZKSObject *o in objects)
 		[env addElement:@"sobject" elemValue:o];
 	[env endElement:elemName];
 
@@ -455,7 +455,7 @@ static const int SAVE_BATCH_SIZE = 25;
 	NSArray *resultsArr = [cr childElements:@"result"];
 	NSMutableArray *results = [NSMutableArray arrayWithCapacity:[resultsArr count]];
 	for (zkElement *cr in resultsArr) {
-		ZKSaveResult * sr = [[ZKSaveResult alloc] initWithXmlElement:cr];
+		ZKSaveResult *sr = [[ZKSaveResult alloc] initWithXmlElement:cr];
 		[results addObject:sr];
 		[sr release];
 	}
@@ -464,27 +464,27 @@ static const int SAVE_BATCH_SIZE = 25;
 }
 
 - (NSDictionary *)retrieve:(NSString *)fields sobject:(NSString *)sobjectType ids:(NSArray *)ids {
-    return [self retrieve:fields sObjectType:sobjectType ids:ids];
+	return [self retrieve:fields sObjectType:sobjectType ids:ids];
 }
 
 - (NSDictionary *)retrieve:(NSString *)fields sObjectType:(NSString *)sobjectType ids:(NSArray *)ids {
-	if(!authSource) return NULL;
+	if (!authSource) return NULL;
 	[self checkSession];
-	
-	ZKEnvelope * env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
-    [self addCallOptions:env];
-    [self addQueryOptions:env];
-    [self addMruHeader:env];
-    [self addPackageVersionHeader:env];
-    [env moveToBody];
+
+	ZKEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId]];
+	[self addCallOptions:env];
+	[self addQueryOptions:env];
+	[self addMruHeader:env];
+	[self addPackageVersionHeader:env];
+	[env moveToBody];
 	[env startElement:@"retrieve"];
 	[env addElement:@"fieldList" elemValue:fields];
 	[env addElement:@"sObjectType" elemValue:sobjectType];
 	[env addElementArray:@"ids" elemValue:ids];
 	[env endElement:@"retrieve"];
-	
+
 	zkElement *rr = [self sendRequest:[env end] name:NSStringFromSelector(_cmd)];
-	NSMutableDictionary *sobjects = [NSMutableDictionary dictionary]; 
+	NSMutableDictionary *sobjects = [NSMutableDictionary dictionary];
 	NSArray *results = [rr childElements:@"result"];
 	for (zkElement *res in results) {
 		ZKSObject *o = [[ZKSObject alloc] initWithXmlElement:res];
@@ -495,62 +495,59 @@ static const int SAVE_BATCH_SIZE = 25;
 	return sobjects;
 }
 
--(void)updateLimitInfo:(zkElement *)soapHeaders {
-    // this looks in the last response for a limit info header and if we got one, hangs onto it.
-    zkElement *liElem = [soapHeaders childElement:@"LimitInfoHeader" ns:@"urn:partner.soap.sforce.com"];
-    if (liElem != nil) {
-        [limitInfo autorelease];
-        limitInfo = [[ZKLimitInfoHeader alloc] initWithXmlElement:liElem];
-    }
+- (void)updateLimitInfo:(zkElement *)soapHeaders {
+	// this looks in the last response for a limit info header and if we got one, hangs onto it.
+	zkElement *liElem = [soapHeaders childElement:@"LimitInfoHeader" ns:@"urn:partner.soap.sforce.com"];
+	if (liElem != nil) {
+		[limitInfo autorelease];
+		limitInfo = [[ZKLimitInfoHeader alloc] initWithXmlElement:liElem];
+	}
 }
 
--(void)handleResponseSoapHeaders:(zkElement *)soapHeaders {
-    [self updateLimitInfo:soapHeaders];
+- (void)handleResponseSoapHeaders:(zkElement *)soapHeaders {
+	[self updateLimitInfo:soapHeaders];
 }
 
--(void)addHeader:(NSObject<ZKXMLSerializable> *)header name:(NSString *)headerName toEnvelope:(ZKEnvelope *)env {
-    if (header != nil)
-        [header serializeToEnvelope:env elemName:headerName];
+- (void)addHeader:(NSObject <ZKXMLSerializable> *)header name:(NSString *)headerName toEnvelope:(ZKEnvelope *)env {
+	if (header != nil)
+		[header serializeToEnvelope:env elemName:headerName];
 }
-
-
-
 
 /*
- 
- curl -d "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='urn:partner.soap.sforce.com'><s:Header><SessionHeader><sessionId>REPLACETHEEXCLAMATIONWITHBACKSLASH!!!!!\\\\\\\\!!!!!!!</sessionId></SessionHeader></s:Header><s:Body>
- 
- 
- ///paste the payload in here eg.
- 
- <create><sObjects><type>FieldStorm__Check_In__c</type><OwnerId>005d0000000rfBUAAY</OwnerId><FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c><FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c></sObjects><sObjects><type>FieldStorm__Check_In__c</type><OwnerId>005d0000000rfBUAAY</OwnerId><Name>(null)</Name><FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c><FieldStorm__CheckInTime__c></
-  </create>
- 
- 
- //end paste
- 
- 
+
+   curl -d "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='urn:partner.soap.sforce.com'><s:Header><SessionHeader><sessionId>REPLACETHEEXCLAMATIONWITHBACKSLASH!!!!!\\\\\\\\!!!!!!!</sessionId></SessionHeader></s:Header><s:Body>
+
+
+   ///paste the payload in here eg.
+
+   <create><sObjects><type>FieldStorm__Check_In__c</type><OwnerId>005d0000000rfBUAAY</OwnerId><FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c><FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c></sObjects><sObjects><type>FieldStorm__Check_In__c</type><OwnerId>005d0000000rfBUAAY</OwnerId><Name>(null)</Name><FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c><FieldStorm__CheckInTime__c></
+   </create>
+
+
+   //end paste
+
+
     </s:Body></s:Envelope>" https://na14.salesforce.com/services/Soap/u/26.0 -H "Content-Type:text/xml"  -H 'SOAPAction: ""'
- 
+
  */
 
 //http://stackoverflow.com/questions/8857318/ruby-rails-how-can-i-create-multiple-records-in-salesforce-with-one-api-call
-- (NSDictionary *)doSoapCallWithMethod:(NSString*)method payload:(NSString*)createPayload {
+- (NSDictionary *)doSoapCallWithMethod:(NSString *)method payload:(NSString *)createPayload {
 	if (!authSource) {
-        NSLog(@"invalid session");
-     [self fireInvalidSession];
-      return nil;
-    }
+		NSLog(@"invalid session");
+		[self fireInvalidSession];
+		return nil;
+	}
 	[self checkSession];
-	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId] autorelease];
+	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:self.clientId] autorelease];
 	[env addSoapPayload:method payloadValue:createPayload];
-	[env endElement:@"s:Body"];
+
 	NSDictionary *dict  = [self fireRequest:[env end]];
-    return dict;
+	return dict;
 }
 
--(void)fireInvalidSession{
-    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:[NSNotification notificationWithName:@"INVALID_SESSION_ID" object:nil  userInfo:nil] waitUntilDone:NO];
+- (void)fireInvalidSession {
+	[[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:[NSNotification notificationWithName:@"INVALID_SESSION_ID" object:nil userInfo:nil] waitUntilDone:NO];
 }
 
 @end

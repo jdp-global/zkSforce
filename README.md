@@ -1,6 +1,6 @@
 # zkSforce README
 
-zkSforce is a cocoa library for calling the [Salesforce.com Web Services APIs](http://www.salesforce.com/us/developer/docs/api/index.htm), easily integrate Salesforce into your OSX and iOS projects. (supports OSX 10.7+, iOS 7+)
+zkSforce is a cocoa library for calling the [Salesforce.com Web Services APIs](http://www.salesforce.com/us/developer/docs/api/index.htm), easily integrate Salesforce into your OSX and iOS projects. (supports OSX 10.7+, iOS 6+)
 
 zkSforce supports all of the partner web services API, including
 
@@ -47,6 +47,7 @@ Login and create a new contact for Simon Fell, and check the result
 	        NSLog(@"error creating contact %@ %@", [sr statusCode], [sr message]);
         [sforce release];
 
+		
 Calls are made synchronously on the thread making the call (and therefore you shouldn't really call it directly from the UI thread), zkSforceClient+zkAsyncQuery.h has a versions of all the calls that are asynchronous and use blocks to get completion/error callbacks.
 
 		[client performQuery:query 
@@ -106,3 +107,116 @@ and run  `pod install myApp.xcodeproj`
 ## Project setup (manual)
 
 In order to support usage on both OSX & iOS, the library now uses libxml as its XML parser rather than NSXML, which isn't fully implemented on iOS. Once you've added all the .h & .m files to your project, you'll need to goto the build settings and add /usr/include/libxml2 to the Header Search Paths, and add libxml2.dylib to the linked frameworks section, and then you should be good to go. For OSX you'll also need to add Security framework to the list of linked Frameworks. The [Wiki](https://github.com/superfell/zkSforce/wiki/Creating-a-new-project-that-uses-zkSforce) has a detailed write up on these steps.
+
+
+
+## Helper methods
+
+This fork of zkSForce has a single method that allows you to get dirty with SOAP API without having to know about the >200 boiler plate model classes or regenerating code from wsdl.
+As long as you know how to structure the payload - you can simply inject any soapString here 
+NSDictionary *dict = [client doSoapCallWithMethod:@"create" payload:soapString];
+The SOAP response is parsed using XMLReader ARC version. https://github.com/RyanCopley/XMLReader That's it.
+
+// Not sure of the correct soap string? You can use curl to test - just switch in sessionids and replace any ! with \!.
+curl -d "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='urn:partner.soap.sforce.com'><s:Header><SessionHeader><sessionId>REPLACETHEEXCLAMATIONWITHBACKSLASH!!!!!\\\\\\\\!!!!!!!</sessionId></SessionHeader></s:Header><s:Body>
+          
+ /// just iterate over your collection append the 
+ <create>
+     <sObjects>
+         <type>FieldStorm__Check_In__c</type>
+         <OwnerId>005d0000000rfBUAAY</OwnerId>
+         <FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>
+         <FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c>
+      </sObjects>
+      <sObjects>
+          <type>FieldStorm__Check_In__c</type>
+          <OwnerId>005d0000000rfBUAAY</OwnerId>
+          <Name>(null)</Name>
+          <FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>
+          <FieldStorm__CheckInTime__c>
+      </sObjects>
+   </create>
+           //end paste
+           
+</s:Body></s:Envelope>" https://na14.salesforce.com/services/Soap/u/29.0 -H "Content-Type:text/xml"  -H 'SOAPAction: ""'
+
+So here - the soap string is
+
+   NSSString *soapString   = @"<sObjects>"
+    ""<type>FieldStorm__Check_In__c</type>"
+    "<OwnerId>005d0000000rfBUAAY</OwnerId>"
+    "<FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>"
+    "<FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c>"
+   "</sObjects>"
+   "<sObjects>"
+     "<type>FieldStorm__Check_In__c</type>"
+     "<OwnerId>005d0000000rfBUAAY</OwnerId>"
+     "<Name>(null)</Name>"
+     "<FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>"
+     "<FieldStorm__CheckInTime__c>"
+    "</sObjects>"
+
+
+ ZKSforceClient *client = [[ZKSforceClient alloc] init];
+    [client login:username password:password];
+ 	[client performRequest:^id {
+		  return [self doSoapCallWithMethod:@"create" payload:soapString];
+		}
+		 checkSession:NO
+		    failBlock:^(NSException *e) {
+                    NSLog(@"exception:%@", e);
+        }
+		completeBlock: ^(id results) {
+                    NSLog(@"dict:%@", results);
+        }];
+		
+		
+	
+returns this
+
+
+dict:{
+createResponse =     {
+    result =         (
+                    {
+            id =                 {
+                text = 00T9000000en4XKEAY;
+            };
+            success =                 {
+                text = true;
+            };
+        },
+                    {
+            id =                 {
+                text = 00T9000000en4XLEAY;
+            };
+            success =                 {
+                text = true;
+            };
+        },
+                    {
+            id =                 {
+                text = 00T9000000en4XMEAY;
+            };
+            success =                 {
+                text = true;
+            };
+        },
+                    {
+            id =                 {
+                text = 00T9000000en4XNEAY;
+            };
+            success =                 {
+                text = true;
+            };
+        },
+                    {
+            id =                 {
+                text = 00T9000000en4XOEAY;
+            };
+            success =                 {
+                text = true;
+            };
+        }
+    );
+};
