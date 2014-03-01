@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'ZKSforce'
-  s.version  = '26.0'
+  s.version  = '30.0.0'
   s.license  = 'MIT'
   s.summary  = 'A Cocoa library for calling the Salesforce.com SOAP APIs.'
   s.homepage = 'https://github.com/superfell/zkSforce'
@@ -10,5 +10,9 @@ Pod::Spec.new do |s|
   s.library = 'xml2'
   s.osx.dependency  'XMLReader'
   s.ios.dependency    'XMLReader'
+  s.osx.framework = 'Security'
+  s.requires_arc = false
   s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(SDKROOT)/usr/include/libxml2' }
+  s.ios.platform = :ios, "6.0"
+  s.osx.platform = :osx, "10.7"
 end
