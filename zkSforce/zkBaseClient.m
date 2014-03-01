@@ -131,4 +131,84 @@ NSTimeInterval intervalFrom(uint64_t *start) {
 -(void)handleResponseSoapHeaders:(zkElement *)soapHeaders {
 }
 
+
+// Return a vanilla json /nsdictionary response
+- (NSDictionary *)fireRequest:(NSString *)payload  {
+
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:endpointUrl];
+    request.timeoutInterval =35;
+	[request setHTTPMethod:@"POST"];
+	[request addValue:@"text/xml; charset=UTF-8" forHTTPHeaderField:@"content-type"];
+	[request addValue:@"\"\"" forHTTPHeaderField:@"SOAPAction"];
+	[request addValue:@"gzip,deflate" forHTTPHeaderField:@"Accepts-Encoding"];
+    
+    NSLog(@"payload:%@",payload);
+	NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
+	[request setHTTPBody:data];
+	
+	NSHTTPURLResponse *resp = nil;
+	NSError *err = nil;
+
+	NSData *respPayload = [NSURLConnection sendSynchronousRequest:request returningResponse:&resp error:&err];
+	
+    NSDictionary *d0 = [resp allHeaderFields];
+    NSLog(@"Status code: %d",[resp statusCode]);
+    NSLog(@"Headers:\n %@",d0.description);
+    NSLog(@"Error: %@",err.description);
+    //NSLog(@"Response data: %@",[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+    
+    NSString* newStr = [NSString stringWithUTF8String:[respPayload bytes]];
+    NSLog(@"response %@", newStr);
+    
+    NSError *parseError = nil;  
+    NSDictionary *dict = [XMLReader dictionaryForXMLString:newStr error:&parseError];
+    NSLog(@"dict %@", dict);
+    NSDictionary *root = [[dict objectForKey:@"soapenv:Envelope"] objectForKey:@"soapenv:Body"];
+
+	if (root == nil){
+        NSLog(@"WARNING: - this dictionary didn't return properly for soapenv:Envelope :%@", dict);
+      	//@throw [NSException exceptionWithName:@"Xml error" reason:@"Unable to parse XML returned by server" userInfo:nil];
+        
+    }
+	
+
+	return root;
+}
+
+
+- (NSDictionary *)fireMetaDataRequest:(NSString *)payload  {
+    NSString* metaDataUrl = [[endpointUrl absoluteString] stringByReplacingOccurrencesOfString:@"Soap/u/" withString:@"Soap/m/"];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:metaDataUrl]];
+
+    NSLog(@"metaDataEndpointUrl:%@",[request.URL absoluteString]);
+	[request setHTTPMethod:@"POST"];
+	[request addValue:@"text/xml; charset=UTF-8" forHTTPHeaderField:@"content-type"];
+	[request addValue:@"\"\"" forHTTPHeaderField:@"SOAPAction"];
+	[request addValue:@"gzip,deflate" forHTTPHeaderField:@"Accepts-Encoding"];
+    NSLog(@"payload %@ ",payload);
+    
+	NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
+	[request setHTTPBody:data];
+	
+	NSHTTPURLResponse *resp = nil;
+	NSError *err = nil;
+    
+	NSData *respPayload = [NSURLConnection sendSynchronousRequest:request returningResponse:&resp error:&err];
+	
+    NSString* newStr = [NSString stringWithUTF8String:[respPayload bytes]];
+     NSLog(@"response %@", newStr);
+    
+    NSError *parseError = nil;
+    NSDictionary *dict = [XMLReader dictionaryForXMLString:newStr error:&parseError];
+     NSLog(@"dict %@", dict);
+    NSDictionary *root = [[dict objectForKey:@"soapenv:Envelope"] objectForKey:@"soapenv:Body"];
+    
+	if (root == nil){
+        NSLog(@"WARNING: - this dictionary didn't return properly for soapenv:Envelope :%@", dict);
+      	@throw [NSException exceptionWithName:@"Xml error" reason:@"Unable to parse XML returned by server" userInfo:nil];
+    }
+	
+    
+	return root;
+}
 @end
