@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.summary  = 'A Cocoa library for calling the Salesforce.com SOAP APIs.'
   s.homepage = 'https://github.com/superfell/zkSforce'
   s.author   = { 'Simon Fell' => 'fellforce@gmail.com' }
-  s.source   = { :git => 'https://github.com/jdp-global/zkSforce.git', :commit=>'42cafc74270aceaffb8da323b638537e0fb85990' }
+  s.source   = { :git => 'https://github.com/jdp-global/zkSforce.git', :commit=>'ea39275c6cb2338a98232bf667eac82cb5548256' }
   s.source_files = 'zkSforce'
   s.library = 'xml2'
   s.osx.dependency  'XMLReader'
