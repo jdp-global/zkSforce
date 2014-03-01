@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Simon Fell
+// Copyright (c) 2006-2008,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -24,9 +24,6 @@
 @interface ZKPartnerEnvelope : ZKEnvelope {
 }
 
-- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId;
-- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix;
-- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix;
-- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix organisationId:(NSString*)orgId portalId:(NSString*)pid;
+- (id)initWithSessionHeader:(NSString *)sessionId;
 
 @end

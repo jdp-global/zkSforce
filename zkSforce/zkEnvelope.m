@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -21,6 +21,7 @@
 
 
 #import "zkEnvelope.h"
+#import "ZKXMLSerializable.h"
 
 @implementation ZKEnvelope
 
@@ -32,7 +33,7 @@ enum envState {
 
 - (void)start:(NSString *)primaryNamespceUri {
 	[env release];
-	env = [NSMutableString stringWithFormat:@"<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='%@'>", primaryNamespceUri];
+	env = [NSMutableString stringWithFormat:@"<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns:x='http://www.w3.org/2001/XMLSchema-instance' xmlns='%@'>", primaryNamespceUri];
 	state = inEnvelope;
 }
 
@@ -136,10 +137,31 @@ enum envState {
 	state = inBody;
 }
 
+- (void) addNullElement:(NSString *)elemName {
+    [env appendFormat:@"<%@ x:nil='true'/>", elemName];
+}
+
+- (void) addBoolElement:(NSString *)elemName elemValue:(BOOL)elemValue {
+    [self addElement:elemName elemValue:(elemValue ? @"true" :@"false")];
+}
+
+- (void) addIntElement:(NSString *)elemName elemValue:(NSInteger)elemValue {
+    [self addElement:elemName elemValue:[NSNumber numberWithInteger:elemValue]];
+}
+
 - (void) addElement:(NSString *)elemName elemValue:(id)elemValue {
-	if ([elemValue isKindOfClass:[NSString class]])      	[self addElementString:elemName elemValue:elemValue];
+    [self addElement:elemName elemValue:elemValue nillable:NO optional:NO];
+}
+
+- (void) addElement:(NSString *)elemName elemValue:(id)elemValue nillable:(BOOL)nillable optional:(BOOL)optional {
+    if (elemValue == nil) {
+        if (optional) return;
+        if (nillable) [self addNullElement:elemName];
+        else [self addElementString:elemName elemValue:@""];
+    } else if ([elemValue isKindOfClass:[NSString class]])    [self addElementString:elemName elemValue:elemValue];
 	else if ([elemValue isKindOfClass:[NSArray class]]) 	[self addElementArray:elemName elemValue:elemValue];
 	else if ([elemValue isKindOfClass:[ZKSObject class]]) 	[self addElementSObject:elemName elemValue:elemValue];
+    else if ([elemValue conformsToProtocol:@protocol(ZKXMLSerializable)]) [elemValue serializeToEnvelope:self elemName:elemName];
 	else [self addElementString:elemName elemValue:[elemValue stringValue]];
 }
 
@@ -194,7 +216,11 @@ enum envState {
 }
 
 - (NSString *)end {
-	[env appendString:@"</s:Envelope>"];
+    if (state == inHeaders)
+        [self endElement:@"s:Header"];
+    if (state == inBody)
+        [self endElement:@"s:Body"];
+    [self endElement:@"s:Envelope"];
 	return env;
 }
 

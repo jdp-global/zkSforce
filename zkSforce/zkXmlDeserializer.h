@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2013,2014 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -21,8 +21,10 @@
 
 
 @class zkElement;
+@class ZKSObject;
+@class ZKQueryResult;
 
-@interface ZKXmlDeserializer : NSObject {
+@interface ZKXmlDeserializer : NSObject<NSCopying> {
 	zkElement *node;
 	NSMutableDictionary *values;
 }
@@ -33,6 +35,11 @@
 - (int)integer:(NSString *)elem;
 - (double)double:(NSString *)elem;
 - (NSArray *)strings:(NSString *)elem;
+- (NSData *)blob:(NSString *)elem;
+- (NSDate *)date:(NSString *)elem;
+- (NSDate *)dateTime:(NSString *)elem;
+- (ZKSObject *)sObject:(NSString *)elem;
+- (ZKQueryResult *)queryResult:(NSString *)elem;
 
 - (NSString *)string:(NSString *)elemName fromXmlElement:(zkElement*)xmlElement;
 - (NSArray *)complexTypeArrayFromElements:(NSString *)elemName cls:(Class)type;

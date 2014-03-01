@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Simon Fell
+// Copyright (c) 2006,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -28,19 +28,21 @@
 }
 
 - (void)start:(NSString *)primaryNamespceUri;
-- (void)start:(NSString *)primaryNamespceUri prefix:(NSString*)prefix;
 - (void)writeSessionHeader:(NSString *)sessionId;
-- (void)writeSessionHeader:(NSString *)sessionId prefix:(NSString*)prefix;
-- (void)writeCallOptionsHeader:(NSString *)clientId;
-- (void)writeCallOptionsHeader:(NSString *)clientId  prefix:(NSString*)prefix;
+- (void)writeCallOptionsHeader:(NSString *)callOptions;
 - (void)writeMruHeader:(BOOL)updateMru;
 
-- (void)writeLoginScopeHeaderWithPortalId:(NSString *)portalId  organisation:(NSString*)oid prefix:(NSString*)prefix;
+- (void) moveToHeaders;
 - (void) moveToBody;
 - (void) startElement:(NSString *)elemName;
 - (void) endElement:(NSString *)elemName;
 - (void) writeText:(NSString *)text;
 - (void) addElement:(NSString *)elemName elemValue:(id)elemValue;
+- (void) addElement:(NSString *)elemName elemValue:(id)elemValue nillable:(BOOL)nillable optional:(BOOL)optional;
+- (void) addNullElement:(NSString *)elemName;
+- (void) addBoolElement:(NSString *)elemName elemValue:(BOOL)elemValue;
+- (void) addIntElement:(NSString *)elemName elemValue:(NSInteger)elemValue;
+
 - (NSString *)end;
 
 - (void) addElementArray:(NSString *)elemName   elemValue:(NSArray *)elemValues;

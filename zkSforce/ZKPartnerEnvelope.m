@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Simon Fell
+// Copyright (c) 2006-2008,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -23,51 +23,10 @@
 
 @implementation ZKPartnerEnvelope
 
-- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId {
-	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:@"urn:partner.soap.sforce.com" prefix:@""];
-}
-
-// Prefix met =  meta data api
-- (id)initWithSessionHeader:(NSString *)sessionId clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix{
-	return [self initWithSessionAndMruHeaders:sessionId mru:NO clientId:clientId namespaceUri:primaryNamespceUri prefix:prefix];
-}
-
-- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix{
-    
-	return [self initWithSessionAndMruHeaders:sessionId mru:mru clientId:clientId namespaceUri:primaryNamespceUri prefix:prefix organisationId:nil portalId:nil];
-}
-
-- (id)initWithSessionAndMruHeaders:(NSString *)sessionId mru:(BOOL)mru clientId:(NSString *)clientId namespaceUri:(NSString*)primaryNamespceUri prefix:(NSString*)prefix organisationId:(NSString*)orgId portalId:(NSString*)pid{
-    
+- (id)initWithSessionHeader:(NSString *)sessionId {
 	self = [super init];
-
-	[self start:primaryNamespceUri prefix:prefix];
-    if (![prefix isEqualToString:@""]) {
-        [self writeSessionHeader:sessionId prefix:prefix];
-        [self writeCallOptionsHeader:clientId  prefix:prefix];
-        if (orgId!=nil) {
-            [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
-        }else{
-            if (pid!=nil) {
-                [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
-            }
-        }
-        [self writeMruHeader:mru];
-        [self moveToBody];
-    }else{
-       	[self writeSessionHeader:sessionId];
-        [self writeCallOptionsHeader:clientId];
-        if (orgId!=nil) {
-            [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
-        }else{
-            if (pid!=nil) {
-                [self writeLoginScopeHeaderWithPortalId:pid organisation:orgId prefix:prefix];
-            }
-        }
-        [self writeMruHeader:mru];
-        [self moveToBody];
-    }
-
+	[self start:@"urn:partner.soap.sforce.com"];
+	[self writeSessionHeader:sessionId];
 	return self;
 }
 

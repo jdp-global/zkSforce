@@ -1,4 +1,4 @@
-// Copyright (c) 2010 Simon Fell
+// Copyright (c) 2010,2013 Simon Fell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a 
 // copy of this software and associated documentation files (the "Software"), 
@@ -23,6 +23,7 @@
 #import "QueryController.h"
 #import "zkSforce.h"
 #import "zkQueryResult+NSTableView.h"
+#import "ZKLimitInfoHeader.h"
 
 @interface QueryController ()
 @property (retain) ZKSforceClient *client;
@@ -31,13 +32,14 @@
 
 @implementation QueryController
 
-@synthesize username, password, client, loginInProgress, result;
+@synthesize username, password, client, loginInProgress, result, apiLimitInfo;
 
 -(void)dealloc {
 	[username release];
 	[password release];
 	[client release];
 	[result release];
+    [apiLimitInfo release];
 	[super dealloc];
 }
 
@@ -53,6 +55,13 @@
 		modalDelegate:nil 
 		didEndSelector:nil 
 		contextInfo:nil];
+}
+
+-(void)updateApiLimitInfo {
+    ZKLimitInfoHeader *h = [client lastLimitInfoHeader];
+    ZKLimitInfo *i = [h limitInfoOfType:@"API REQUESTS"];
+    if (i != nil)
+        self.apiLimitInfo = [i description];
 }
 
 // run the query on a background thread, and when we get the results, update the UI (from the main thread)
@@ -78,34 +87,40 @@
 	// request happen on another thread, then switch back to the UI
 	// thread at the end to update the UI state.
 	[self setLoginInProgress:YES];
-	dispatch_async ( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		ZKSforceClient *theClient = [[[ZKSforceClient alloc] init] autorelease];
-		@try {
-			[theClient login:username password:password];
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[self willChangeValueForKey:@"isLoggedIn"];
-				[self setClient:theClient];
-				[self didChangeValueForKey:@"isLoggedIn"];
-				[self runQuery:self];
-			});
-		} @catch (ZKSoapException *ex) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[self setLoginInProgress:NO];
-				[self showError:ex];
-			});
-		}
-	});
+    // you can either do the blocks stuff yourself and use the methods in SforceClient / SforceClient(Operations)
+    // or there's a blocks vesion available in SforceClient(zkAsyncQuery) that you can use.
+    ZKSforceClient *theClient = [[[ZKSforceClient alloc] init] autorelease];
+    [theClient setDelegate:self];
+    [theClient performLogin:username password:password failBlock:^(NSException *res) {
+        [self setLoginInProgress:NO];
+        [self showError:res];
+    } completeBlock:^(ZKLoginResult *result) {
+        [self willChangeValueForKey:@"isLoggedIn"];
+        [self setClient:theClient];
+        [self didChangeValueForKey:@"isLoggedIn"];
+        [self runQuery:self];
+    }];
 }
 
 -(IBAction)showServerTimestamp:(id)sender {
-    [client performServerTimestampWithFailBlock:^(NSException *e) {
+    [client performGetServerTimestampWithFailBlock:^(NSException *e) {
         NSLog(@"Error fetching timestamp : %@", e);
-    } completeBlock:^(NSString *str) {
+    } completeBlock:^(ZKGetServerTimestampResult *str) {
         [[NSAlert alertWithMessageText:@"Server Timestamp"
                          defaultButton:@"Close"
                        alternateButton:nil
                            otherButton:nil
-             informativeTextWithFormat:@"Server Time : %@", str] runModal];
+             informativeTextWithFormat:@"Server Time : %@", [str timestamp]] runModal];
     }];
 }
+
+-(void)client:(ZKSforceClient *)client sentRequest:(NSString *)payload named:(NSString *)callName to:(NSURL *)endpoint withResponse:(zkElement *)response in:(NSTimeInterval)time {
+    NSLog(@"%@ took %f", callName, time);
+    [self updateApiLimitInfo];
+}
+
+-(void)client:(ZKSforceClient *)client sentRequest:(NSString *)payload named:(NSString *)callName to:(NSURL *)endpoint withException:(NSException *)ex    in:(NSTimeInterval)time {
+    NSLog(@"%@ took %f withException %@", callName, time, ex);
+}
+
 @end

@@ -22,13 +22,11 @@
 #import "zkBaseClient.h"
 
 @class ZKLoginResult;
-@class ZKBaseClient;
 
 @protocol ZKAuthenticationInfo 
 
 -(NSString *)sessionId;     // return an API Session ID.
 -(NSURL *)instanceUrl;      // return the full URL to the soap endpoint for the authentication user.
--(NSURL *)metaDataUrl;      // meta data api
 -(void)refresh;             // force the sessionId to be refreshed.
 -(BOOL)refreshIfNeeded;     // refresh the sesion if its needed. (this gets called before every soap call)
                             // return true if the session was refreshed.
@@ -41,9 +39,6 @@
     NSDate *sessionExpiresAt;
     NSString *sessionId;
     NSString *clientId;
-    NSString *organisationId;
-    NSString *portalId;
-    
 }
 
 @end
@@ -73,8 +68,17 @@
     ZKBaseClient *client;
 }
 
-+(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid;
-+(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid organisationId:(NSString*)orgId portalId:(NSString*)pid;
++(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid delegate:(NSObject<ZKBaseClientDelegate> *)delegate;
+
 -(ZKLoginResult *)login;
+
+@end
+
+// Impl of ZKAuthenticatioNInfo that uses Soap Login calls setup for portal users to generate new session Ids.
+@interface ZKSoapPortalLogin : ZKSoapLogin {
+    NSString *orgId, *portalId;
+}
+
++(id)soapPortalLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid delegate:(NSObject<ZKBaseClientDelegate> *)delegate orgId:(NSString *)orgId portalId:(NSString *)portalId;
 
 @end

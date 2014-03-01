@@ -24,6 +24,7 @@
 #import "zkParser.h"
 #import "zkLoginResult.h"
 #import "zkUserInfo.h"
+#import "zkBaseClient.h"
 
 static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 
@@ -119,10 +120,6 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 -(NSURL *)instanceUrl {
     return [NSURL URLWithString:[NSString stringWithFormat:@"/services/Soap/u/%d.0", apiVersion] relativeToURL:instanceUrl];
 }
--(NSURL *)metaDataUrl {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"/services/Soap/m/%d.0", apiVersion] relativeToURL:instanceUrl];
-}
-
 
 -(void)refresh {
     NSURL *token = [NSURL URLWithString:@"/services/oauth2/token" relativeToURL:authUrl];
@@ -154,30 +151,19 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 @end
 
 @implementation ZKSoapLogin
--(id)initWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid{
-    return [self initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid organisationId:nil portalId:nil];
-}
 
--(id)initWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid organisationId:(NSString*)oid portalId:(NSString*)pid{
+-(id)initWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid delegate:(NSObject<ZKBaseClientDelegate> *)delegate {
     self = [super init];
-    portalId = nil;
-    organisationId = nil;
-    if (pid!=nil) portalId = [pid copy];
-    if (oid!=nil) organisationId = [oid copy];
-    
     username = [un retain];
     password = [pwd retain];
     clientId = [cid retain];
-    organisationId = [oid copy];
     client = [[ZKBaseClient alloc] init];
 	client.endpointUrl = [NSURL URLWithString:[NSString stringWithFormat:@"/services/Soap/u/%d.0", v] relativeToURL:auth];
+    client.delegate = delegate;
     return self;
 }
 
 -(void)dealloc {
-    if (organisationId!=nil) [organisationId release];
-    if (portalId!=nil)  [portalId release];
-    [clientId release];
     [username release];
     [password release];
     [client release];
@@ -187,41 +173,24 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 -(void)refresh {
     [self login];
 }
-/*
- <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:partner.soap.sforce.com">
- <soapenv:Header>
- <urn:CallOptions>
- <urn:client>?</urn:client>
- <urn:defaultNamespace>?</urn:defaultNamespace>
- </urn:CallOptions>
- <urn:LoginScopeHeader>
- <urn:organizationId>?</urn:organizationId>
- <!--Optional:-->
- <urn:portalId>?</urn:portalId>
- </urn:LoginScopeHeader>
- </soapenv:Header>
- <soapenv:Body>
- <urn:login>
- <urn:username>?</urn:username>
- <urn:password>?</urn:password>
- </urn:login>
- </soapenv:Body>
- </soapenv:Envelope>
- */
+
+-(ZKPartnerEnvelope *)newEnvelope {
+	ZKPartnerEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:nil];
+    [env writeCallOptionsHeader:clientId];
+    [env moveToBody];
+    return env;
+}
+
 -(ZKLoginResult *)login {
-	ZKEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:nil clientId:clientId];
-    
-    //[env startElement:@"login"];
-    
+	ZKEnvelope *env = [self newEnvelope];
 	[env startElement:@"login"];
 	[env addElement:@"username" elemValue:username];
 	[env addElement:@"password" elemValue:password];
 	[env endElement:@"login"];
-	[env endElement:@"s:Body"];
 	NSString *xml = [env end];
 	[env release];
 	
-	zkElement *resp = [client sendRequest:xml];	
+	zkElement *resp = [client sendRequest:xml name:@"login"];
 	zkElement *result = [[resp childElements:@"result"] objectAtIndex:0];
 	ZKLoginResult *lr = [[[ZKLoginResult alloc] initWithXmlElement:result] autorelease];
 	
@@ -229,17 +198,46 @@ static const int DEFAULT_MAX_SESSION_AGE = 25 * 60; // 25 minutes
 	self.sessionId = [lr sessionId];
 
 	// if we have a sessionSecondsValid in the UserInfo, use that to control when we re-authenticate, otherwise take the default.
-	int sessionAge = [[lr userInfo] sessionSecondsValid] > 0 ? [[lr userInfo] sessionSecondsValid] - 60 : DEFAULT_MAX_SESSION_AGE;
+	NSInteger sessionAge = [[lr userInfo] sessionSecondsValid] > 0 ? [[lr userInfo] sessionSecondsValid] - 60 : DEFAULT_MAX_SESSION_AGE;
 	self.sessionExpiresAt = [NSDate dateWithTimeIntervalSinceNow:sessionAge];
 	return lr;
 }
 
-+(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid {
-    return [[[ZKSoapLogin alloc] initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid] autorelease];
++(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid delegate:(NSObject<ZKBaseClientDelegate> *)delegate {
+    return [[[ZKSoapLogin alloc] initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid delegate:delegate] autorelease];
 }
 
-+(id)soapLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid organisationId:(NSString*)orgId portalId:(NSString*)pid{
-    return [[[ZKSoapLogin alloc] initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid organisationId:orgId portalId:pid] autorelease];
+@end
+
+@implementation ZKSoapPortalLogin
+
+-(id)initWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid delegate:(NSObject<ZKBaseClientDelegate> *)delegate orgId:(NSString *)oid portalId:(NSString *)pid {
+    self = [super initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid delegate:delegate];
+    orgId = [oid retain];
+    portalId = [pid retain];
+    return self;
+}
+
+-(void)dealloc {
+    [orgId release];
+    [portalId release];
+    [super dealloc];
+}
+
+-(ZKPartnerEnvelope *)newEnvelope {
+    ZKPartnerEnvelope *env = [[ZKPartnerEnvelope alloc] initWithSessionHeader:nil];
+    [env writeCallOptionsHeader:clientId];
+    [env startElement:@"LoginScopeHeader"];
+    [env addElement:@"organizationId" elemValue:orgId];
+    if ([portalId length] > 0)
+        [env addElement:@"portalId" elemValue:portalId];
+    [env endElement:@"LoginScopeHeader"];
+    [env moveToBody];
+    return env;
+}
+
++(id)soapPortalLoginWithUsername:(NSString *)un password:(NSString *)pwd authHost:(NSURL *)auth apiVersion:(int)v clientId:(NSString *)cid delegate:(NSObject<ZKBaseClientDelegate> *)delegate orgId:(NSString *)orgId portalId:(NSString *)portalId {
+    return [[[ZKSoapPortalLogin alloc] initWithUsername:un password:pwd authHost:auth apiVersion:v clientId:cid delegate:delegate orgId:orgId portalId:portalId] autorelease];
 }
 
 @end
