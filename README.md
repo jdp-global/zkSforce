@@ -120,103 +120,80 @@ The SOAP response is parsed using XMLReader ARC version. https://github.com/Ryan
 // Not sure of the correct soap string? You can use curl to test - just switch in sessionids and replace any ! with \!.
 curl -d "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='urn:partner.soap.sforce.com'><s:Header><SessionHeader><sessionId>REPLACETHEEXCLAMATIONWITHBACKSLASH!!!!!\\\\\\\\!!!!!!!</sessionId></SessionHeader></s:Header><s:Body>
           
- /// just iterate over your collection append the 
- <create>
-     <sObjects>
-         <type>FieldStorm__Check_In__c</type>
-         <OwnerId>005d0000000rfBUAAY</OwnerId>
-         <FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>
-         <FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c>
-      </sObjects>
-      <sObjects>
-          <type>FieldStorm__Check_In__c</type>
-          <OwnerId>005d0000000rfBUAAY</OwnerId>
-          <Name>(null)</Name>
-          <FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>
-          <FieldStorm__CheckInTime__c>
-      </sObjects>
-   </create>
-           //end paste
+     /// just iterate over your collection append the 
+     <create>
+         <sObjects>
+             <type>FieldStorm__Check_In__c</type>
+             <OwnerId>005d0000000rfBUAAY</OwnerId>
+             <FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>
+             <FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c>
+          </sObjects>
+          <sObjects>
+              <type>FieldStorm__Check_In__c</type>
+              <OwnerId>005d0000000rfBUAAY</OwnerId>
+              <Name>(null)</Name>
+              <FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>
+              <FieldStorm__CheckInTime__c>
+          </sObjects>
+       </create>
+               //end paste
            
-</s:Body></s:Envelope>" https://na14.salesforce.com/services/Soap/u/29.0 -H "Content-Type:text/xml"  -H 'SOAPAction: ""'
+    </s:Body></s:Envelope>" https://na14.salesforce.com/services/Soap/u/29.0 -H "Content-Type:text/xml"  -H 'SOAPAction: ""'
 
 So here - the soap string is
 
-   NSSString *soapString   = @"<sObjects>"
-    ""<type>FieldStorm__Check_In__c</type>"
-    "<OwnerId>005d0000000rfBUAAY</OwnerId>"
-    "<FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>"
-    "<FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c>"
-   "</sObjects>"
-   "<sObjects>"
-     "<type>FieldStorm__Check_In__c</type>"
-     "<OwnerId>005d0000000rfBUAAY</OwnerId>"
-     "<Name>(null)</Name>"
-     "<FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>"
-     "<FieldStorm__CheckInTime__c>"
-    "</sObjects>"
+       NSSString *soapString   = @"<sObjects>"
+        ""<type>FieldStorm__Check_In__c</type>"
+        "<OwnerId>005d0000000rfBUAAY</OwnerId>"
+        "<FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>"
+        "<FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c>"
+       "</sObjects>"
+       "<sObjects>"
+         "<type>FieldStorm__Check_In__c</type>"
+         "<OwnerId>005d0000000rfBUAAY</OwnerId>"
+         "<Name>(null)</Name>"
+         "<FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c>"
+         "<FieldStorm__CheckInTime__c>"
+        "</sObjects>"
 
 
- ZKSforceClient *client = [[ZKSforceClient alloc] init];
-    [client login:username password:password];
- 	[client performRequest:^id {
-		  return [self doSoapCallWithMethod:@"create" payload:soapString];
-		}
-		 checkSession:NO
-		    failBlock:^(NSException *e) {
-                    NSLog(@"exception:%@", e);
-        }
-		completeBlock: ^(id results) {
-                    NSLog(@"dict:%@", results);
-        }];
+     ZKSforceClient *client = [[ZKSforceClient alloc] init];
+        [client login:username password:password];
+     	[client performRequest:^id {
+    		  return [self doSoapCallWithMethod:@"create" payload:soapString];
+    		}
+    		 checkSession:NO
+    		    failBlock:^(NSException *e) {
+                        NSLog(@"exception:%@", e);
+            }
+    		completeBlock: ^(id results) {
+                        NSLog(@"dict:%@", results);
+            }];
 		
 		
 	
 returns this
 
 
-dict:{
-createResponse =     {
-    result =         (
-                    {
-            id =                 {
-                text = 00T9000000en4XKEAY;
-            };
-            success =                 {
-                text = true;
-            };
-        },
-                    {
-            id =                 {
-                text = 00T9000000en4XLEAY;
-            };
-            success =                 {
-                text = true;
-            };
-        },
-                    {
-            id =                 {
-                text = 00T9000000en4XMEAY;
-            };
-            success =                 {
-                text = true;
-            };
-        },
-                    {
-            id =                 {
-                text = 00T9000000en4XNEAY;
-            };
-            success =                 {
-                text = true;
-            };
-        },
-                    {
-            id =                 {
-                text = 00T9000000en4XOEAY;
-            };
-            success =                 {
-                text = true;
-            };
-        }
-    );
-};
+    dict:{
+    createResponse =     {
+        result =         (
+                        {
+                id =                 {
+                    text = 00T9000000en4XKEAY;
+                };
+                success =                 {
+                    text = true;
+                };
+            },
+                        {
+                id =                 {
+                    text = 00T9000000en4XLEAY;
+                };
+                success =                 {
+                    text = true;
+                };
+            },
+                etc...
+        );
+    };
