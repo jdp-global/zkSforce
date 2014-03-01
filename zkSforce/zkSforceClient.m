@@ -513,4 +513,44 @@ static const int SAVE_BATCH_SIZE = 25;
         [header serializeToEnvelope:env elemName:headerName];
 }
 
+
+
+
+/*
+ 
+ curl -d "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='urn:partner.soap.sforce.com'><s:Header><SessionHeader><sessionId>REPLACETHEEXCLAMATIONWITHBACKSLASH!!!!!\\\\\\\\!!!!!!!</sessionId></SessionHeader></s:Header><s:Body>
+ 
+ 
+ ///paste the payload in here eg.
+ 
+ <create><sObjects><type>FieldStorm__Check_In__c</type><OwnerId>005d0000000rfBUAAY</OwnerId><FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c><FieldStorm__UserId__c>005d0000000rfBUAAY</FieldStorm__UserId__c></sObjects><sObjects><type>FieldStorm__Check_In__c</type><OwnerId>005d0000000rfBUAAY</OwnerId><Name>(null)</Name><FieldStorm__AccountId__c>001d000000V4CA4AAN</FieldStorm__AccountId__c><FieldStorm__CheckInTime__c></
+  </create>
+ 
+ 
+ //end paste
+ 
+ 
+    </s:Body></s:Envelope>" https://na14.salesforce.com/services/Soap/u/26.0 -H "Content-Type:text/xml"  -H 'SOAPAction: ""'
+ 
+ */
+
+//http://stackoverflow.com/questions/8857318/ruby-rails-how-can-i-create-multiple-records-in-salesforce-with-one-api-call
+- (NSDictionary *)doSoapCallWithMethod:(NSString*)method payload:(NSString*)createPayload {
+	if (!authSource) {
+        NSLog(@"invalid session");
+     [self fireInvalidSession];
+      return nil;
+    }
+	[self checkSession];
+	ZKEnvelope *env = [[[ZKPartnerEnvelope alloc] initWithSessionHeader:[authSource sessionId] clientId:clientId] autorelease];
+	[env addSoapPayload:method payloadValue:createPayload];
+	[env endElement:@"s:Body"];
+	NSDictionary *dict  = [self fireRequest:[env end]];
+    return dict;
+}
+
+-(void)fireInvalidSession{
+    [[NSNotificationCenter defaultCenter] performSelectorOnMainThread:@selector(postNotification:) withObject:[NSNotification notificationWithName:@"INVALID_SESSION_ID" object:nil  userInfo:nil] waitUntilDone:NO];
+}
+
 @end

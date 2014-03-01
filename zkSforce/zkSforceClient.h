@@ -220,6 +220,7 @@
 @property (assign) BOOL cacheDescribes;
 - (void)flushCachedDescribes;
 
+- (NSDictionary *)doSoapCallWithMethod:(NSString*)method payload:(NSString*)createPayload;
 
 
 @end
