@@ -1,21 +1,21 @@
 // Copyright (c) 2006-2013 Simon Fell
 //
-// Permission is hereby granted, free of charge, to any person obtaining a 
-// copy of this software and associated documentation files (the "Software"), 
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-// and/or sell copies of the Software, and to permit persons to whom the 
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
 // Software is furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included 
+// The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
 
@@ -50,30 +50,30 @@
 // kept alive, and login will be called again for you if needed.
 //////////////////////////////////////////////////////////////////////////////////////
 @interface ZKSforceClient : ZKBaseClient <NSCopying> {
-	NSString	*authEndpointUrl;
-	ZKUserInfo	*userInfo;
-	BOOL		cacheDescribes;
-	NSMutableDictionary	*describes;
-	int			preferedApiVersion;
+	NSString *authEndpointUrl;
+	ZKUserInfo *userInfo;
+	BOOL cacheDescribes;
+	NSMutableDictionary *describes;
+	int preferedApiVersion;
 
-    NSObject<ZKAuthenticationInfo>  *authSource;
-    ZKLimitInfoHeader *limitInfo;
-    
-    // Soap Headers on requests
-    ZKCallOptions           *callOptions;
-    ZKPackageVersionHeader  *packageVersionHeader;
-    ZKLocaleOptions         *localeOptions;
-    ZKAssignmentRuleHeader  *assignmentRuleHeader;
-    ZKMruHeader             *mruHeader;
-    ZKAllowFieldTruncationHeader *allowFieldTruncationHeader;
-    ZKDisableFeedTrackingHeader  *disableFeedTrackingHeader;
-    ZKStreamingEnabledHeader     *streamingEnabledHeader;
-    ZKAllOrNoneHeader            *allOrNoneHeader;
-    ZKDebuggingHeader            *debuggingHeader;
-    ZKEmailHeader                *emailHeader;
-    ZKOwnerChangeOptions         *ownerChangeOptions;
-    ZKUserTerritoryDeleteHeader  *userTerritoryDeleteHeader;
-    ZKQueryOptions               *queryOptions;
+	NSObject <ZKAuthenticationInfo> *authSource;
+	ZKLimitInfoHeader *limitInfo;
+
+	// Soap Headers on requests
+	ZKCallOptions *callOptions;
+	ZKPackageVersionHeader *packageVersionHeader;
+	ZKLocaleOptions *localeOptions;
+	ZKAssignmentRuleHeader *assignmentRuleHeader;
+	ZKMruHeader *mruHeader;
+	ZKAllowFieldTruncationHeader *allowFieldTruncationHeader;
+	ZKDisableFeedTrackingHeader *disableFeedTrackingHeader;
+	ZKStreamingEnabledHeader *streamingEnabledHeader;
+	ZKAllOrNoneHeader *allOrNoneHeader;
+	ZKDebuggingHeader *debuggingHeader;
+	ZKEmailHeader *emailHeader;
+	ZKOwnerChangeOptions *ownerChangeOptions;
+	ZKUserTerritoryDeleteHeader *userTerritoryDeleteHeader;
+	ZKQueryOptions *queryOptions;
 }
 
 // configuration for where to connect to and what api version to use
@@ -85,13 +85,13 @@
 
 // What endpoint to connect to? this should just be the protocol and host
 // part of the URL, e.g. https://test.salesforce.com
--(void)setLoginProtocolAndHost:(NSString *)protocolAndHost;
+- (void)setLoginProtocolAndHost:(NSString *)protocolAndHost;
 
 // set both the endpoint to connect to, and an explicit API version to use.
--(void)setLoginProtocolAndHost:(NSString *)protocolAndHost andVersion:(int)version;
+- (void)setLoginProtocolAndHost:(NSString *)protocolAndHost andVersion:(int)version;
 
 // returns an NSURL of where authentication will currently go.
--(NSURL *)authEndpointUrl;
+- (NSURL *)authEndpointUrl;
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Start an API session, need to call one of these before making any api calls
@@ -102,7 +102,7 @@
 - (ZKLoginResult *)login:(NSString *)username password:(NSString *)password;
 
 
-- (ZKLoginResult *)login:(NSString *)un password:(NSString *)pwd organisationId:(NSString*)orgId portalId:(NSString*)pid;;
+- (ZKLoginResult *)login:(NSString *)un password:(NSString *)pwd organisationId:(NSString *)orgId portalId:(NSString *)pid;
 
 // Initialize the authentication info from the parameters contained in the OAuth
 // completion callback Uri passed in.
@@ -125,7 +125,7 @@
 // Normally you'd just call login:password or loginFromOAuthCallbackUrl:
 // which will create a ZKAuthenticationInfo object for you.
 //////////////////////////////////////////////////////////////////////////////////////
-@property (retain) NSObject<ZKAuthenticationInfo> *authenticationInfo;
+@property (retain) NSObject <ZKAuthenticationInfo> *authenticationInfo;
 
 
 // thse set of methods pretty much map directly onto their Web Services counterparts.
@@ -164,8 +164,8 @@
 // ZKSforceClient+Operations.h
 //////////////////////////////////////////////////////////////////////////////////////
 
-- (NSDictionary*)describeMetaData;
-- (NSDictionary *)listMetaDataWithType:(NSString*)qType folder:(NSString*)folder;
+- (NSDictionary *)describeMetaData;
+- (NSDictionary *)listMetaDataWithType:(NSString *)qType folder:(NSString *)folder;
 
 // Information about the current session
 //////////////////////////////////////////////////////////////////////////////////////
@@ -200,49 +200,49 @@
 // If you want to change the batch size for queries, you can set this to 200-2000, the default is null. (uses the server side default)
 @property (retain) NSNumber *queryBatchSize;
 
-@property (retain) ZKCallOptions                *callOptions;
-@property (retain) ZKPackageVersionHeader       *packageVersionHeader;
-@property (retain) ZKLocaleOptions              *localeOptions;
-@property (retain) ZKAssignmentRuleHeader       *assignmentRuleHeader;
-@property (retain) ZKMruHeader                  *mruHeader;
+@property (retain) ZKCallOptions *callOptions;
+@property (retain) ZKPackageVersionHeader *packageVersionHeader;
+@property (retain) ZKLocaleOptions *localeOptions;
+@property (retain) ZKAssignmentRuleHeader *assignmentRuleHeader;
+@property (retain) ZKMruHeader *mruHeader;
 @property (retain) ZKAllowFieldTruncationHeader *allowFieldTruncationHeader;
-@property (retain) ZKDisableFeedTrackingHeader  *disableFeedTrackingHeader;
-@property (retain) ZKStreamingEnabledHeader     *streamingEnabledHeader;
-@property (retain) ZKAllOrNoneHeader            *allOrNoneHeader;
-@property (retain) ZKDebuggingHeader            *debuggingHeader;
-@property (retain) ZKEmailHeader                *emailHeader;
-@property (retain) ZKOwnerChangeOptions         *ownerChangeOptions;
-@property (retain) ZKUserTerritoryDeleteHeader  *userTerritoryDeleteHeader;
-@property (retain) ZKQueryOptions               *queryOptions;
+@property (retain) ZKDisableFeedTrackingHeader *disableFeedTrackingHeader;
+@property (retain) ZKStreamingEnabledHeader *streamingEnabledHeader;
+@property (retain) ZKAllOrNoneHeader *allOrNoneHeader;
+@property (retain) ZKDebuggingHeader *debuggingHeader;
+@property (retain) ZKEmailHeader *emailHeader;
+@property (retain) ZKOwnerChangeOptions *ownerChangeOptions;
+@property (retain) ZKUserTerritoryDeleteHeader *userTerritoryDeleteHeader;
+@property (retain) ZKQueryOptions *queryOptions;
 
 // describe caching support, if true, describeGlobal & describeSObject call results are cached.
 //////////////////////////////////////////////////////////////////////////////////////
 @property (assign) BOOL cacheDescribes;
 - (void)flushCachedDescribes;
 
-- (NSDictionary *)doSoapCallWithMethod:(NSString*)method payload:(NSString*)createPayload;
-
+// helper method to quickly talk to API https://github.com/jdp-global/zkSforce/
+- (NSDictionary *)doSoapCallWithMethod:(NSString *)method payload:(NSString *)createPayload;
+- (BOOL)refreshIfNeeded;
 
 @end
 
 
-// These are helper methods used by the Operations category, you shouldn't need to call these directly 
+// These are helper methods used by the Operations category, you shouldn't need to call these directly
 @interface ZKSforceClient (Helpers)
--(void)checkSession;
--(void)updateLimitInfo;
--(void)addCallOptions:(ZKEnvelope *)env;
--(void)addPackageVersionHeader:(ZKEnvelope *)env;
--(void)addLocaleOptions:(ZKEnvelope *)env;
--(void)addAssignmentRuleHeader:(ZKEnvelope *)env;
--(void)addMruHeader:(ZKEnvelope *)env;
--(void)addAllowFieldTruncationHeader:(ZKEnvelope *)env;
--(void)addDisableFeedTrackingHeader:(ZKEnvelope *)env;
--(void)addStreamingEnabledHeader:(ZKEnvelope *)env;
--(void)addAllOrNoneHeader:(ZKEnvelope *)env;
--(void)addDebuggingHeader:(ZKEnvelope *)env;
--(void)addEmailHeader:(ZKEnvelope *)env;
--(void)addOwnerChangeOptions:(ZKEnvelope *)env;
--(void)addUserTerritoryDeleteHeader:(ZKEnvelope *)env;
--(void)addQueryOptions:(ZKEnvelope *)env;
+- (void)checkSession;
+- (void)updateLimitInfo;
+- (void)addCallOptions:(ZKEnvelope *)env;
+- (void)addPackageVersionHeader:(ZKEnvelope *)env;
+- (void)addLocaleOptions:(ZKEnvelope *)env;
+- (void)addAssignmentRuleHeader:(ZKEnvelope *)env;
+- (void)addMruHeader:(ZKEnvelope *)env;
+- (void)addAllowFieldTruncationHeader:(ZKEnvelope *)env;
+- (void)addDisableFeedTrackingHeader:(ZKEnvelope *)env;
+- (void)addStreamingEnabledHeader:(ZKEnvelope *)env;
+- (void)addAllOrNoneHeader:(ZKEnvelope *)env;
+- (void)addDebuggingHeader:(ZKEnvelope *)env;
+- (void)addEmailHeader:(ZKEnvelope *)env;
+- (void)addOwnerChangeOptions:(ZKEnvelope *)env;
+- (void)addUserTerritoryDeleteHeader:(ZKEnvelope *)env;
+- (void)addQueryOptions:(ZKEnvelope *)env;
 @end
-
