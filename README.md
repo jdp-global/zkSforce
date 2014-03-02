@@ -115,7 +115,7 @@ In order to support usage on both OSX & iOS, the library now uses libxml as its 
 This fork of zkSForce has a single method that allows you to get dirty with SOAP API without having to know about the >200 boiler plate model classes or regenerating code from wsdl.
 As long as you know how to structure the payload - you can simply inject any soapString here 
     NSDictionary *dict = [client doSoapCallWithMethod:@"create" payload:soapString];
-The SOAP response is parsed using XMLReader ARC version. https://github.com/RyanCopley/XMLReader That's it.
+The SOAP response is parsed using XMLDictionary https://github.com/nicklockwood/XMLDictionary - That's it.
 
     // Not sure of the correct soap string? You can use curl to test - just switch in sessionids and replace any ! with \!.
     curl -d "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' xmlns='urn:partner.soap.sforce.com'><s:Header><SessionHeader><sessionId>REPLACETHEEXCLAMATIONWITHBACKSLASH!!!!!\\\\\\\\!!!!!!!</sessionId></SessionHeader></s:Header><s:Body>
