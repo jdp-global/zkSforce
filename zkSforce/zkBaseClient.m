@@ -151,6 +151,12 @@ NSTimeInterval intervalFrom(uint64_t *start) {
 
 	NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&resp error:&err];
 
+	NSMutableString *newStr = [[NSMutableString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
+	// fix for salesforce soap response API bug // Case 10277325
+	[newStr replaceOccurrencesOfString:@"</soapenv:Body></soapenv:Envelope>soapenv:Body></soapenv:Envelope>" withString:@"</soapenv:Body></soapenv:Envelope>" options:0 range:NSMakeRange(0, [newStr length])];
+
+
+	NSLog(@"newStr:%@", newStr);
 	NSDictionary *d0 = [resp allHeaderFields];
 	NSLog(@"Status code: %d", [resp statusCode]);
 	NSLog(@"Headers:\n %@", d0.description);
@@ -158,8 +164,7 @@ NSTimeInterval intervalFrom(uint64_t *start) {
 
 
 	NSError *parseError = nil;
-
-	NSDictionary *dict = [[XMLDictionary sharedInstance] initWithData:returnData encoding:NSUTF8StringEncoding];
+	NSDictionary *dict = [XMLDictionary dictionaryWithXMLString:newStr];
 	NSLog(@"dict: %@", dict);
 	NSDictionary *root = [[dict objectForKey:@"Envelope"] objectForKey:@"Body"];
 
@@ -192,7 +197,7 @@ NSTimeInterval intervalFrom(uint64_t *start) {
 	NSDictionary *root = [[dict objectForKey:@"Envelope"] objectForKey:@"Body"];
 
 	if (root == nil) {
-		NSLog(@"WARNING: - this dictionary didn't return properly for soapenv:Envelope :%@", dict);
+		NSLog(@"WARNING: - this dictionary didn't return properly for dict :%@", dict);
 		@throw [NSException exceptionWithName:@"Xml error" reason:@"Unable to parse XML returned by server" userInfo:nil];
 	}
 
