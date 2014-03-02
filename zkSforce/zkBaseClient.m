@@ -188,14 +188,8 @@ NSTimeInterval intervalFrom(uint64_t *start) {
 	NSError *err = nil;
 
 	NSData *respPayload = [NSURLConnection sendSynchronousRequest:request returningResponse:&resp error:&err];
-
-	NSString *newStr = [NSString stringWithUTF8String:[respPayload bytes]];
-	NSLog(@"response %@", newStr);
-
-	NSError *parseError = nil;
-	NSDictionary *dict = [XMLReader dictionaryForXMLString:newStr error:&parseError];
-	NSLog(@"dict %@", dict);
-	NSDictionary *root = [[dict objectForKey:@"soapenv:Envelope"] objectForKey:@"soapenv:Body"];
+	NSDictionary *dict = [[XMLDictionary sharedInstance] initWithData:returnData encoding:NSUTF8StringEncoding];
+	NSDictionary *root = [[dict objectForKey:@"Envelope"] objectForKey:@"Body"];
 
 	if (root == nil) {
 		NSLog(@"WARNING: - this dictionary didn't return properly for soapenv:Envelope :%@", dict);
